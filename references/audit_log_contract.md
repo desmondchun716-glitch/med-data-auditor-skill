@@ -6,7 +6,7 @@
 
 Audit log records audit evidence, not patient data.
 
-The Markdown report remains the primary human-facing output. The audit log captures the deterministic evidence needed to understand a run: metadata, rule fingerprints, dataset shape, variable-role mapping, study-design summary, warning counts, warning objects, token metrics, and output paths.
+The Markdown report remains the primary human-facing output. The audit log captures the deterministic evidence needed to understand a run: metadata, rule fingerprints, dataset shape, variable-role mapping, study-design summary, warning summaries, warning objects, token metrics, and output paths.
 
 ## Non-goals
 
@@ -59,7 +59,7 @@ The audit log may include:
 - dataset row count, column count, column names, variable types, missingness summary, and potential ID-like column names
 - variable-role mapping
 - study-design summary
-- warning counts by category
+- warning counts by category, severity, and issue type
 - warning objects that follow the shared `AuditWarning` schema
 - token compression metrics
 - privacy-safety flags
@@ -122,7 +122,7 @@ Validation must confirm:
     "version_target": "v0.2"
   },
   "run": {
-    "run_id": "uuid4-string",
+    "run_id": "deterministic-uuid-string",
     "created_at_utc": "2026-06-17T00:00:00Z",
     "user_question": "Is BMI associated with hypertension?"
   },
@@ -155,6 +155,10 @@ Validation must confirm:
   },
   "warnings": {
     "counts": {},
+    "counts_by_category": {},
+    "counts_by_severity": {},
+    "counts_by_issue_type": {},
+    "total_count": 0,
     "items": []
   },
   "token_metrics": {},

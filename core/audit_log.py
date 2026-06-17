@@ -77,6 +77,14 @@ def _warning_counts(
     }
 
 
+def _warning_counts_by_field(warnings: list[dict[str, Any]], field: str) -> dict[str, int]:
+    counts: dict[str, int] = {}
+    for warning in warnings:
+        value = warning.get(field) or "unspecified"
+        counts[str(value)] = counts.get(str(value), 0) + 1
+    return dict(sorted(counts.items()))
+
+
 def _warning_items(
     *,
     intake_warnings: list[dict[str, Any]],
@@ -92,6 +100,29 @@ def _warning_items(
         *statistical_warnings,
         *privacy_warnings,
     ]
+
+
+def _deterministic_run_id(
+    *,
+    data_file_metadata: dict[str, Any],
+    question: str,
+    output_path: str | Path,
+    audit_log_output_path: str | Path | None,
+    rule_metadata: dict[str, dict[str, Any]],
+) -> str:
+    seed = json.dumps(
+        {
+            "schema_version": AUDIT_LOG_SCHEMA_VERSION,
+            "data_file": data_file_metadata,
+            "question": question,
+            "report_path": str(output_path),
+            "audit_log_path": str(audit_log_output_path) if audit_log_output_path else None,
+            "rules": rule_metadata,
+        },
+        sort_keys=True,
+        default=str,
+    )
+    return str(uuid.uuid5(uuid.NAMESPACE_URL, seed))
 
 
 def build_audit_log(
@@ -129,6 +160,10 @@ def build_audit_log(
 
     data_file_metadata = safe_file_metadata(data_path)
     data_file_metadata["column_count_from_intake"] = metadata.get("n_columns")
+    rule_metadata = _safe_rule_metadata(rule_paths)
+    total_warning_count = len(warnings)
+    counts_by_severity = _warning_counts_by_field(warnings, "severity")
+    counts_by_issue_type = _warning_counts_by_field(warnings, "issue_type")
 
     return {
         "schema_version": AUDIT_LOG_SCHEMA_VERSION,
@@ -137,13 +172,19 @@ def build_audit_log(
             "version_target": "v0.2",
         },
         "run": {
-            "run_id": str(uuid.uuid4()),
+            "run_id": _deterministic_run_id(
+                data_file_metadata=data_file_metadata,
+                question=question,
+                output_path=output_path,
+                audit_log_output_path=audit_log_output_path,
+                rule_metadata=rule_metadata,
+            ),
             "created_at_utc": datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
             "user_question": question,
         },
         "inputs": {
             "data_file": data_file_metadata,
-            "rules": _safe_rule_metadata(rule_paths),
+            "rules": rule_metadata,
         },
         "outputs": {
             "report_path": str(output_path),
@@ -156,6 +197,10 @@ def build_audit_log(
         },
         "warnings": {
             "counts": counts,
+            "counts_by_category": counts,
+            "counts_by_severity": counts_by_severity,
+            "counts_by_issue_type": counts_by_issue_type,
+            "total_count": total_warning_count,
             "items": warnings,
         },
         "token_metrics": token_metrics,
@@ -189,11 +234,34 @@ def validate_audit_log_schema(audit_log: dict[str, Any]) -> bool:
     warnings = audit_log.get("warnings")
     if not isinstance(warnings, dict):
         return False
+    required_warning_keys = {
+        "counts",
+        "counts_by_category",
+        "counts_by_severity",
+        "counts_by_issue_type",
+        "total_count",
+        "items",
+    }
+    if set(warnings.keys()) != required_warning_keys:
+        return False
     counts = warnings.get("counts")
+    counts_by_category = warnings.get("counts_by_category")
+    counts_by_severity = warnings.get("counts_by_severity")
+    counts_by_issue_type = warnings.get("counts_by_issue_type")
+    total_count = warnings.get("total_count")
     items = warnings.get("items")
     if not isinstance(counts, dict) or not all(isinstance(value, int) for value in counts.values()):
         return False
+    if counts_by_category != counts:
+        return False
+    for grouped_counts in (counts_by_severity, counts_by_issue_type):
+        if not isinstance(grouped_counts, dict) or not all(isinstance(value, int) for value in grouped_counts.values()):
+            return False
     if not isinstance(items, list):
+        return False
+    if not isinstance(total_count, int) or total_count != len(items):
+        return False
+    if sum(counts_by_severity.values()) != total_count or sum(counts_by_issue_type.values()) != total_count:
         return False
     if not all(isinstance(item, dict) and validate_warning_schema(item) for item in items):
         return False

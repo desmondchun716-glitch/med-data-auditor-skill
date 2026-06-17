@@ -77,12 +77,29 @@ def test_run_audit_writes_audit_log_json(tmp_path) -> None:
     assert payload["outputs"]["audit_log_path"] == str(audit_log_path)
 
 
+def test_audit_log_contains_warning_summaries(tmp_path) -> None:
+    data_path = tmp_path / "demo.csv"
+    report_path = tmp_path / "report.md"
+    audit_log_path = tmp_path / "audit_log.json"
+    _write_demo_csv(data_path)
+
+    summary = run_audit(data_path, QUESTION, report_path, audit_log_output_path=audit_log_path)
+    warnings = summary["audit_log"]["warnings"]
+
+    assert warnings["total_count"] == len(warnings["items"])
+    assert warnings["counts_by_category"]["medical"] > 0
+    assert warnings["counts_by_severity"]["critical"] > 0
+    assert warnings["counts_by_issue_type"]["medical_plausibility"] > 0
+    assert sum(warnings["counts_by_severity"].values()) == warnings["total_count"]
+    assert sum(warnings["counts_by_issue_type"].values()) == warnings["total_count"]
+
+
 def test_audit_log_does_not_store_raw_pii_values(tmp_path) -> None:
     data_path = tmp_path / "pii_demo.csv"
     data_path.write_text(
-        "patient_id,patient_name,phone,age,bmi,hypertension\n"
-        "p1,Alice Private Test,123-456-7890,50,25.0,1\n"
-        "p2,Bob Private Test,999-111-2222,60,30.0,0\n",
+        "patient_id,patient_name,phone,age,bmi,lab_marker,hypertension\n"
+        "p1,Alice Private Test,123-456-7890,50,25.0,UNIQUE_NON_PII_CELL_ABC,1\n"
+        "p2,Bob Private Test,999-111-2222,60,30.0,UNIQUE_NON_PII_CELL_DEF,0\n",
         encoding="utf-8",
     )
     report_path = tmp_path / "report.md"
@@ -100,6 +117,8 @@ def test_audit_log_does_not_store_raw_pii_values(tmp_path) -> None:
     assert "Bob Private Test" not in text
     assert "123-456-7890" not in text
     assert "999-111-2222" not in text
+    assert "UNIQUE_NON_PII_CELL_ABC" not in text
+    assert "UNIQUE_NON_PII_CELL_DEF" not in text
 
 
 def test_existing_warning_items_match_warning_schema(tmp_path) -> None:
