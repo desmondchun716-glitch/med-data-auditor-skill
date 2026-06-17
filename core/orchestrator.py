@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .audit_log import build_audit_log, save_audit_log
+from .flagged_records import build_flagged_records, save_flagged_records
 from .intake import intake_dataset
 from .medical_rules import check_medical_rules
 from .privacy_checker import check_privacy_risks
@@ -24,6 +25,7 @@ def run_audit(
     statistical_rules_path: str | Path | None = None,
     variable_dictionary_path: str | Path | None = None,
     audit_log_output_path: str | Path | None = None,
+    flagged_records_output_path: str | Path | None = None,
 ) -> dict[str, Any]:
     medical_rules_path = Path(medical_rules_path) if medical_rules_path else ROOT_DIR / "rules" / "medical_rules.yaml"
     statistical_rules_path = Path(statistical_rules_path) if statistical_rules_path else ROOT_DIR / "rules" / "statistical_rules.yaml"
@@ -37,6 +39,13 @@ def run_audit(
     medical_warnings = check_medical_rules(df, rules_path=medical_rules_path)
     statistical_warnings = check_statistical_risks(df, profile=profile, variable_roles=variable_roles, rules_path=statistical_rules_path)
     privacy_warnings = check_privacy_risks(df)
+    all_warnings = [
+        *intake_warnings,
+        *study_design_warnings,
+        *medical_warnings,
+        *statistical_warnings,
+        *privacy_warnings,
+    ]
 
     report_without_metrics = generate_markdown_report(
         question=question,
@@ -89,10 +98,17 @@ def run_audit(
         )
         save_audit_log(audit_log, audit_log_output_path)
 
+    flagged_records = None
+    if flagged_records_output_path:
+        flagged_records = build_flagged_records(all_warnings)
+        save_flagged_records(flagged_records, flagged_records_output_path)
+
     return {
         "output_path": str(output_path),
         "audit_log_path": str(audit_log_output_path) if audit_log_output_path else None,
         "audit_log": audit_log,
+        "flagged_records_path": str(flagged_records_output_path) if flagged_records_output_path else None,
+        "flagged_records_count": len(flagged_records) if flagged_records is not None else None,
         "metadata": metadata,
         "profile": profile,
         "variable_roles": variable_roles,
