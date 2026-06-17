@@ -33,6 +33,29 @@ Out of scope:
 - Separate child skills for future categories
 - GitHub publishing before the user confirms the local version is ready
 
+## v0.2 Contract
+
+v0.2 must strengthen the existing single-skill workflow without changing the project identity.
+
+All v0.2 work must satisfy:
+
+1. The project remains one main Agent Skill named `med-data-auditor-skill`.
+2. Future capabilities are internal workstreams, modules, scripts, rules, or references.
+3. No child skills, extra `SKILL.md`, or separate skill directories are allowed.
+4. The v0.1 core pipeline remains stable unless a workstream explicitly requires a minimal change.
+5. Each branch has one active v0.2 workstream.
+6. Any new output contract preserves privacy safety, deterministic validation, and human confirmation requirements.
+
+The seven v0.2 internal workstreams are:
+
+1. Single-skill guardrails and v0.2 contract
+2. Audit log contract
+3. Flagged records contract
+4. Unit warning contract
+5. Missingness and analysis-readiness metrics
+6. Iterative extraction protocol
+7. Report contract and token metrics polish
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.
@@ -82,6 +105,35 @@ Data that must not be stored:
 - Deeper validation: run against additional synthetic health survey, RWE, and clinical trial-like CSVs.
 - Holdout examples: future versions should keep small de-identified or synthetic edge-case fixtures.
 - Acceptance gates: one-command audit works, injected issues are detected, report includes all required sections, and safety limitations are visible.
+
+## v0.2 Validation Gates
+
+Documentation-only v0.2 work must pass:
+
+```bash
+git diff --name-only
+git ls-files --cached --others --exclude-standard -- '*SKILL.md'
+```
+
+Expected result for the second command: only the root `SKILL.md` exists.
+
+Documentation-only workstreams should also confirm no core implementation files changed:
+
+```bash
+git diff -- core rules scripts tests data reports examples run_audit.py requirements.txt
+```
+
+Expected result: no diff.
+
+Code-changing v0.2 work must additionally pass:
+
+```bash
+python scripts/generate_sample_data.py
+python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md
+python -m pytest
+```
+
+The PR must explain if any command is not run.
 
 ## Known Limitations
 
