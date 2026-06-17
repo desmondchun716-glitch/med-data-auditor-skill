@@ -33,6 +33,7 @@ def main() -> None:
     print(f"Wrote audit report to {summary['output_path']}")
     print(
         "Warnings: "
+        f"intake={warning_counts['intake']}, "
         f"medical={warning_counts['medical']}, "
         f"statistical={warning_counts['statistical']}, "
         f"privacy={warning_counts['privacy']}, "

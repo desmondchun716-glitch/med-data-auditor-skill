@@ -79,7 +79,7 @@ Example CLI output:
 
 ```text
 Wrote audit report to reports/sample_audit_report.md
-Warnings: medical=7, statistical=6, privacy=2, study_design=0
+Warnings: intake=0, medical=7, statistical=6, privacy=2, study_design=0
 Approximate token compression: 9236 -> 2130 (4.3:1)
 ```
 
@@ -146,7 +146,7 @@ This project is for educational and research data-auditing workflows only.
 ## Roadmap
 
 - v0.1: CSV audit, YAML rules, deterministic warnings, AI-ready report.
-- v0.2: flagged records, audit logs, unit warnings, token metrics, iterative extraction requests.
+- v0.2: flagged records, audit logs, unit warnings, expanded audit metrics, iterative extraction requests.
 - v0.3: Table 1 readiness, logistic regression readiness, basic exploratory outputs, clinical trial demo data.
 - v0.4+: Excel/SAS/Stata support, DuckDB, Great Expectations, CDISC concept checks, web UI.
 

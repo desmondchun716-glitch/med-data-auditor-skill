@@ -20,7 +20,7 @@
 | External LLM API use | Rejected for v0.1 | The source requires local deterministic scanning and no external model calls |
 | Web UI | Deferred | Out of v0.1 scope and would increase completion risk |
 | Eight separate skill categories | Rejected | Future categories should be internal modules or roadmap items inside one main skill |
-| GitHub upload now | Deferred | Publish only after the local v0.1 workflow is polished and explicitly approved |
+| GitHub upload | Completed | Published after v0.1 workflow polish, validation, and user approval |
 | `core/` module architecture | Adopted | The latest blueprint clarifies seven business modules and two support layers |
 | Basic study design warnings | Adopted for v0.1 | Warnings support analysis readiness without performing modeling |
 
@@ -63,7 +63,7 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 
 ## Open Gaps
 
-- v0.1 token metrics are rough estimates.
+- v0.1 token metrics are rough estimates for report compression only.
 - Rules are generic and should be expanded with domain-specific validation cases.
 - Variable role mapping is keyword-based and may need user confirmation.
 - No flagged records CSV or audit log until v0.2.
@@ -71,5 +71,6 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 ## Changelog
 
 - 2026-06-17: Created v0.1 repository structure, scripts, rules, references, tests, and skill metadata from the original design draft.
-- 2026-06-17: Tightened scope to one main skill and deferred GitHub upload until local v0.1 is approved.
+- 2026-06-17: Tightened scope to one main skill and deferred new feature work until after v0.1 approval.
 - 2026-06-17: Adapted latest complete blueprint into a `core/` internal-module architecture with schemas, orchestrator, study design warnings, and stronger privacy checks.
+- 2026-06-17: Published the polished v0.1 repository to GitHub and kept future expansion in the roadmap.
