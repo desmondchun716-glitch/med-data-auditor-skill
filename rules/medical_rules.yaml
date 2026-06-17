@@ -1,0 +1,42 @@
+numeric_ranges:
+  age:
+    min: 0
+    max: 120
+    severity: critical
+    description: "Age should be between 0 and 120 years."
+    recommended_action: "Verify age values and units."
+  bmi:
+    min: 10
+    max: 80
+    severity: high
+    description: "BMI is outside the broad adult plausibility range."
+    recommended_action: "Verify height, weight, BMI calculation, and units."
+  sbp:
+    min: 60
+    max: 260
+    severity: high
+    description: "Systolic blood pressure is outside a broad plausibility range."
+    recommended_action: "Verify blood pressure entries and units."
+  dbp:
+    min: 30
+    max: 160
+    severity: high
+    description: "Diastolic blood pressure is outside a broad plausibility range."
+    recommended_action: "Verify blood pressure entries and units."
+
+logic_rules:
+  - id: MED_LOGIC_001
+    name: sbp_less_than_dbp
+    description: "Systolic blood pressure should not be lower than diastolic blood pressure."
+    severity: critical
+    recommended_action: "Verify blood pressure entries."
+  - id: MED_LOGIC_002
+    name: death_before_visit
+    description: "Death date should not be earlier than visit date."
+    severity: critical
+    recommended_action: "Verify visit and death dates."
+  - id: MED_LOGIC_003
+    name: negative_follow_up
+    description: "Follow-up time should not be negative."
+    severity: critical
+    recommended_action: "Verify follow-up duration and date-derived fields."

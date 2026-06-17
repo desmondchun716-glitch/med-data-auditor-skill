@@ -1,0 +1,7 @@
+interface:
+  display_name: "Med Data Auditor"
+  short_description: "Audit biomedical CSVs before AI-assisted analysis."
+  default_prompt: "Use $med-data-auditor-skill to audit this biomedical dataset and generate an AI-ready Markdown report."
+
+policy:
+  allow_implicit_invocation: true

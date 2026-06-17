@@ -1,0 +1,18 @@
+missingness:
+  high_missing_rate: 0.20
+  critical_missing_rate: 0.40
+
+outcome_balance:
+  severe_imbalance_threshold: 0.90
+
+categorical_sparsity:
+  min_count_per_level: 5
+
+sample_size:
+  min_total_n: 100
+  min_outcome_events: 10
+
+cardinality:
+  high_unique_rate: 0.50
+  near_unique_rate: 0.95
+  max_categorical_levels: 50

@@ -1,0 +1,52 @@
+bmi:
+  synonyms:
+    - bmi
+    - body mass index
+    - weight status
+  default_role: exposure
+
+hypertension:
+  synonyms:
+    - hypertension
+    - high blood pressure
+    - htn
+  default_role: outcome
+
+age:
+  synonyms:
+    - age
+  default_role: confounder
+
+sex:
+  synonyms:
+    - sex
+    - gender
+  default_role: confounder
+
+smoking:
+  synonyms:
+    - smoking
+    - smoker
+    - tobacco
+  default_role: confounder
+
+diabetes:
+  synonyms:
+    - diabetes
+    - dm
+    - type 2 diabetes
+  default_role: confounder
+
+treatment_group:
+  synonyms:
+    - treatment
+    - treatment group
+    - therapy
+  default_role: exposure
+
+outcome:
+  synonyms:
+    - outcome
+    - improved outcome
+    - response
+  default_role: outcome

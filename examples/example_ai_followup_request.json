@@ -1,0 +1,7 @@
+{
+  "task": "summarize_by_group",
+  "group_by": "hypertension",
+  "variables": ["bmi", "age", "sex", "smoking"],
+  "outputs": ["missingness", "mean_sd", "frequency"],
+  "note": "Planned v0.2 iterative extraction request. v0.1 generates the main audit report only."
+}
