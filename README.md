@@ -112,20 +112,21 @@ Synthetic demo issue coverage:
 
 ```text
 med-data-auditor-skill/
-├── SKILL.md
-├── SPEC.md
-├── SOURCES.md
-├── README.md
-├── requirements.txt
-├── run_audit.py
-├── core/
-├── data/
-├── examples/
-├── references/
-├── reports/
-├── rules/
-├── scripts/
-└── tests/
+|-- SKILL.md
+|-- SPEC.md
+|-- SOURCES.md
+|-- README.md
+|-- LICENSE
+|-- requirements.txt
+|-- run_audit.py
+|-- core/
+|-- data/
+|-- examples/
+|-- references/
+|-- reports/
+|-- rules/
+|-- scripts/
+`-- tests/
 ```
 
 `SKILL.md` is the Agent Skills entrypoint. `run_audit.py` is a thin CLI wrapper. `core/orchestrator.py` controls the workflow, and `core/` contains the internal business modules and support layers. The original design draft is preserved in `med_data_auditor_skill_spec.md`.
@@ -149,4 +150,4 @@ This project is for educational and research data-auditing workflows only.
 - v0.3: Table 1 readiness, logistic regression readiness, basic exploratory outputs, clinical trial demo data.
 - v0.4+: Excel/SAS/Stata support, DuckDB, Great Expectations, CDISC concept checks, web UI.
 
-Publishing to GitHub is intentionally deferred until the local v0.1 workflow is polished and approved.
+The GitHub portfolio version should keep the v0.1 scope narrow: one main skill, deterministic local checks, and a professional AI-ready report.
