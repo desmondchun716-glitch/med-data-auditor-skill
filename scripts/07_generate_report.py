@@ -76,20 +76,20 @@ def _recommended_plan(profile: dict[str, Any], relevant_vars: dict[str, Any], wa
     variable_types = profile.get("variable_types", {})
 
     if len(categorical) == 2:
-        model = "A logistic regression model may be appropriate for a binary outcome"
+        analysis_direction = "A binary-outcome association analysis may be considered after readiness issues are reviewed"
     elif variable_types.get(outcome_name) == "numeric":
-        model = "A linear regression or correlation analysis may be appropriate for a numeric outcome"
+        analysis_direction = "A numeric-outcome association analysis may be considered after readiness issues are reviewed"
     else:
-        model = "A descriptive or group-comparison analysis may be appropriate after confirming the outcome type"
+        analysis_direction = "A descriptive or group-comparison analysis may be considered after confirming the outcome type"
 
     plan = (
-        f"{model}. The primary exposure is {_list_or_none(exposure)}, the outcome is {_list_or_none(outcome)}, "
+        f"{analysis_direction}. The primary exposure is {_list_or_none(exposure)}, the outcome is {_list_or_none(outcome)}, "
         f"and the requested adjustment variables are {_list_or_none(confounders)}. "
     )
     if critical_or_high:
         top = "; ".join(f"{w.get('issue_id')} on {w.get('variable')}" for w in critical_or_high[:5])
         plan += f"Do not proceed to modeling until these high-priority issues are reviewed: {top}. "
-    plan += "Interpret results as association unless the study design and analysis plan justify causal language."
+    plan += "v0.1 does not fit statistical models or report model estimates. Interpret future results as association unless the study design and analysis plan justify causal language."
     return plan
 
 
@@ -189,7 +189,7 @@ Do not upload identifiable patient data to external AI tools.
 
 {_warning_table(privacy_warnings)}
 
-## 8. Recommended Analysis Plan
+## 8. Analysis-readiness Notes
 
 {_recommended_plan(profile, relevant_vars, all_warnings)}
 

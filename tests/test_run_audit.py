@@ -38,4 +38,4 @@ def test_run_audit_writes_required_report_sections(tmp_path) -> None:
     assert "Medical Plausibility Warnings" in report
     assert "Statistical Risk Warnings" in report
     assert "Privacy / Identifier Warnings" in report
-    assert "Recommended Analysis Plan" in report
+    assert "Analysis-readiness Notes" in report

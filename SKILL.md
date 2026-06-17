@@ -5,6 +5,12 @@ description: Audits biomedical, clinical, public health, epidemiology, health su
 
 # Med Data Auditor Skill
 
+## Single Skill Boundary
+
+Use exactly one main skill named `med-data-auditor-skill`. Treat future categories as internal modules or roadmap items, not separate skills.
+
+For v0.1, implement only the core analysis-readiness audit workflow: data intake, data profiling, biomedical plausibility checks, statistical risk checks, variable role mapping, privacy / PII field detection, and AI-ready Markdown report generation.
+
 ## Default Workflow
 
 1. Confirm the data is synthetic, de-identified, or safe for local processing. Do not upload identifiable patient data to external services.
@@ -36,7 +42,9 @@ python scripts/run_audit.py --data <csv_path> --question "<research question>" -
 - Never overwrite the original dataset.
 - Treat warnings as evidence for review, not proof that records are wrong.
 - Keep deterministic checks in Python and interpretation in the AI response.
+- Do not split this project into multiple skills.
 - Do not make causal, clinical, or regulatory claims.
+- Do not implement full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
 - Prefer association language unless study design and analysis justify stronger wording.
 - If the report is missing key variables or has critical warnings, stop and ask for human confirmation before modeling advice.
 

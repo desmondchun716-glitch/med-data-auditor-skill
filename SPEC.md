@@ -4,7 +4,7 @@
 
 Med Data Auditor Skill turns a biomedical or public health CSV plus a user research question into a compact, evidence-based audit report. The tool performs local full-data scanning and deterministic checks so an AI assistant can interpret structured evidence instead of sampling raw rows.
 
-The first version is a portfolio-ready v0.1: small, runnable, safe, and clear about limitations.
+The project is one main skill named `med-data-auditor-skill`. Future categories are internal modules or roadmap items, not separate skills. The first version is a portfolio-ready v0.1: small, runnable, safe, and clear about limitations.
 
 ## Scope
 
@@ -30,6 +30,8 @@ Out of scope:
 - Complex causal inference
 - Production clinical data management
 - Regulatory-grade CDISC SDTM or ADaM support
+- Separate child skills for future categories
+- GitHub publishing before the user confirms the local version is ready
 
 ## Users And Trigger Context
 
@@ -40,7 +42,7 @@ Out of scope:
 ## Runtime Contract
 
 - Required first actions: verify privacy safety, run local scripts when a CSV is available, read the Markdown report before advising.
-- Required outputs: report with dataset overview, relevant variables, missingness, medical warnings, statistical warnings, privacy warnings, recommended analysis plan, human confirmation questions, token-saving summary, and limitations.
+- Required outputs: report with dataset overview, relevant variables, missingness, medical warnings, statistical warnings, privacy warnings, analysis-readiness notes, human confirmation questions, token-saving summary, and limitations.
 - Non-negotiable constraints: never overwrite source data, never treat warnings as clinical truth, never upload identifiable patient data.
 - Expected bundled files loaded at runtime: `SKILL.md`; optional routed files in `references/` only when modifying reports, rules, or scope.
 
@@ -68,7 +70,7 @@ Data that must not be stored:
 ## Reference Architecture
 
 - `SKILL.md` contains runtime activation, workflow, script contract, safety boundaries, and validation commands.
-- `references/` contains report contracts, rule authoring guidance, and roadmap scope control.
+- `references/` contains report contracts, rule authoring guidance, and roadmap scope control for one main skill.
 - `scripts/` contains deterministic data generation, profiling, checking, mapping, and report rendering code.
 - `rules/` contains YAML medical, statistical, and variable dictionary configuration.
 - `tests/` contains lightweight regression checks for the first version.

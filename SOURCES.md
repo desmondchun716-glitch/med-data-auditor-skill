@@ -18,6 +18,8 @@
 | Keep original design draft | Adopted | It is useful provenance and future planning material |
 | External LLM API use | Rejected for v0.1 | The source requires local deterministic scanning and no external model calls |
 | Web UI | Deferred | Out of v0.1 scope and would increase completion risk |
+| Eight separate skill categories | Rejected | Future categories should be internal modules or roadmap items inside one main skill |
+| GitHub upload now | Deferred | Publish only after the local v0.1 workflow is polished and explicitly approved |
 
 ## Coverage Matrix
 
@@ -32,7 +34,7 @@
 
 ## Source Adaptation Notes
 
-- Source intent: create a token-efficient biomedical data auditor suitable for future work and GitHub display.
+- Source intent: create a token-efficient biomedical data auditor suitable for future work and eventual portfolio display.
 - Local target: produce an installable Agent Skill repository plus a runnable Python CLI.
 - Fidelity boundary: preserve v0.1 scope, safety limits, deterministic program/AI division, report sections, and roadmap.
 - Local replacements: use `SKILL.md` instead of lowercase `skill.md`; split maintenance and provenance into `SPEC.md` and `SOURCES.md`.
@@ -66,3 +68,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 ## Changelog
 
 - 2026-06-17: Created v0.1 repository structure, scripts, rules, references, tests, and skill metadata from the original design draft.
+- 2026-06-17: Tightened scope to one main skill and deferred GitHub upload until local v0.1 is approved.

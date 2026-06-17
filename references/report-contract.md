@@ -11,7 +11,7 @@ Use this file when editing `scripts/07_generate_report.py` or changing required 
 5. Medical Plausibility Warnings
 6. Statistical Risk Warnings
 7. Privacy / Identifier Warnings
-8. Recommended Analysis Plan
+8. Analysis-readiness Notes
 9. Questions for Human Confirmation
 10. Token-saving Summary
 11. Limitations
@@ -65,5 +65,5 @@ The dataset proves BMI causes hypertension.
 Good:
 
 ```text
-The dataset may support an association analysis after missingness, duplicates, and medical plausibility warnings are reviewed.
+The dataset may support association analysis after missingness, duplicates, and medical plausibility warnings are reviewed; v0.1 does not run or report a fitted model.
 ```

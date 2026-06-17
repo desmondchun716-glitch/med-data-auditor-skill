@@ -69,9 +69,9 @@ Do not upload identifiable patient data to external AI tools.
 | critical | PRIV_DIRECT_IDENTIFIER | email |  | Potential direct identifier field detected. | Do not upload identifiable patient data to external AI tools. Remove, hash, or replace this field before analysis. |  |
 
 
-## 8. Recommended Analysis Plan
+## 8. Analysis-readiness Notes
 
-A logistic regression model may be appropriate for a binary outcome. The primary exposure is `bmi`, the outcome is `hypertension`, and the requested adjustment variables are `age`, `sex`. Do not proceed to modeling until these high-priority issues are reviewed: MED_RANGE_AGE on age; MED_RANGE_BMI on bmi; MED_LOGIC_001 on sbp, dbp; MED_LOGIC_002 on death_date, visit_date; MED_LOGIC_003 on follow_up_days. Interpret results as association unless the study design and analysis plan justify causal language.
+A binary-outcome association analysis may be considered after readiness issues are reviewed. The primary exposure is `bmi`, the outcome is `hypertension`, and the requested adjustment variables are `age`, `sex`. Do not proceed to modeling until these high-priority issues are reviewed: MED_RANGE_AGE on age; MED_RANGE_BMI on bmi; MED_LOGIC_001 on sbp, dbp; MED_LOGIC_002 on death_date, visit_date; MED_LOGIC_003 on follow_up_days. v0.1 does not fit statistical models or report model estimates. Interpret future results as association unless the study design and analysis plan justify causal language.
 
 ## 9. Questions for Human Confirmation
 
@@ -97,4 +97,4 @@ The dataset contains 300 records and 18 variables. The user question maps to exp
 - Medical plausibility warnings require human confirmation.
 - v0.1 supports analysis-readiness review, not automatic causal inference.
 
-Approximate source CSV tokens: 9236. Approximate report tokens: 1786. Compression ratio: 5.2:1.
+Approximate source CSV tokens: 9236. Approximate report tokens: 1810. Compression ratio: 5.1:1.

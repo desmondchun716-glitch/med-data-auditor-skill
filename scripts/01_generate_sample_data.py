@@ -58,7 +58,7 @@ def generate_sample_data(n_rows: int = 300, seed: int = 42) -> pd.DataFrame:
 
     df = pd.DataFrame(rows)
 
-    # Inject deterministic issues for validation and GitHub demonstration.
+    # Inject deterministic issues for validation and portfolio demonstration.
     df.loc[0, "age"] = 150
     df.loc[1, "age"] = -3
     df.loc[2, "bmi"] = 5

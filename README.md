@@ -8,6 +8,8 @@ Large biomedical datasets are costly and unreliable for an AI assistant to inspe
 
 The project is intentionally small in v0.1: CSV input, pandas profiling, YAML rules, deterministic checks, and an AI-ready report. It does not clean the original data, make clinical decisions, or run production-grade clinical data management.
 
+This repository contains one main skill named `med-data-auditor-skill`. Future directions should become internal modules or roadmap items after the core workflow is strong enough, not separate skills.
+
 ## Features
 
 - CSV dataset profiling
@@ -73,6 +75,7 @@ This project is for educational and research data-auditing workflows only.
 - Do not upload real patient data to external AI tools.
 - It is not a clinical decision-making tool.
 - It does not replace a statistician, clinical data manager, or regulatory-grade workflow.
+- It does not implement full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
 - All medical plausibility warnings require human confirmation.
 
 ## Roadmap
@@ -81,3 +84,5 @@ This project is for educational and research data-auditing workflows only.
 - v0.2: flagged records, audit logs, unit warnings, token metrics, iterative extraction requests.
 - v0.3: Table 1 readiness, logistic regression readiness, basic exploratory outputs, clinical trial demo data.
 - v0.4+: Excel/SAS/Stata support, DuckDB, Great Expectations, CDISC concept checks, web UI.
+
+Publishing to GitHub is intentionally deferred until the local v0.1 workflow is polished and approved.

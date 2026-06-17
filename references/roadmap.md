@@ -2,6 +2,8 @@
 
 Use this file before expanding beyond the first version.
 
+Do not create separate skills for future categories. Add future directions as internal modules, scripts, rules, references, or roadmap items inside the single `med-data-auditor-skill` project.
+
 ## v0.1 Only
 
 - CSV input
@@ -13,6 +15,8 @@ Use this file before expanding beyond the first version.
 - synthetic sample data
 - simple tests
 - CLI command
+
+Do not add full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
 
 ## v0.2 Candidates
 
@@ -51,3 +55,4 @@ Before adding a feature, confirm:
 3. It improves analysis readiness rather than becoming generic cleaning.
 4. It does not require external LLM calls for core auditing.
 5. It keeps warnings separate from clinical conclusions.
+6. It stays inside the one-skill architecture.
