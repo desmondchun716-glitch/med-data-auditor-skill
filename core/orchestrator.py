@@ -3,6 +3,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .audit_log import build_audit_log, save_audit_log
 from .intake import intake_dataset
 from .medical_rules import check_medical_rules
 from .privacy_checker import check_privacy_risks
@@ -22,6 +23,7 @@ def run_audit(
     medical_rules_path: str | Path | None = None,
     statistical_rules_path: str | Path | None = None,
     variable_dictionary_path: str | Path | None = None,
+    audit_log_output_path: str | Path | None = None,
 ) -> dict[str, Any]:
     medical_rules_path = Path(medical_rules_path) if medical_rules_path else ROOT_DIR / "rules" / "medical_rules.yaml"
     statistical_rules_path = Path(statistical_rules_path) if statistical_rules_path else ROOT_DIR / "rules" / "statistical_rules.yaml"
@@ -62,8 +64,35 @@ def run_audit(
     )
     save_report(report, output_path)
 
+    audit_log = None
+    if audit_log_output_path:
+        audit_log = build_audit_log(
+            data_path=data_path,
+            question=question,
+            output_path=output_path,
+            audit_log_output_path=audit_log_output_path,
+            metadata=metadata,
+            profile=profile,
+            variable_roles=variable_roles,
+            study_design=study_design,
+            intake_warnings=intake_warnings,
+            study_design_warnings=study_design_warnings,
+            medical_warnings=medical_warnings,
+            statistical_warnings=statistical_warnings,
+            privacy_warnings=privacy_warnings,
+            token_metrics=token_metrics,
+            rule_paths={
+                "medical_rules": medical_rules_path,
+                "statistical_rules": statistical_rules_path,
+                "variable_dictionary": variable_dictionary_path,
+            },
+        )
+        save_audit_log(audit_log, audit_log_output_path)
+
     return {
         "output_path": str(output_path),
+        "audit_log_path": str(audit_log_output_path) if audit_log_output_path else None,
+        "audit_log": audit_log,
         "metadata": metadata,
         "profile": profile,
         "variable_roles": variable_roles,

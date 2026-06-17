@@ -56,6 +56,14 @@ The seven v0.2 internal workstreams are:
 6. Iterative extraction protocol
 7. Report contract and token metrics polish
 
+### WS2 Audit Log Contract
+
+WS2 adds an optional `audit_log.json` output. The audit log is a privacy-safe machine-readable audit trail for reproducibility and downstream tooling.
+
+It may include run metadata, safe file metadata, rule fingerprints, dataset shape, variable roles, study design summary, warning counts, warning objects, token metrics, and output paths.
+
+It must not include raw rows, raw cell values, direct identifier values, secrets, full raw datasets, or external LLM outputs as authoritative evidence.
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.
