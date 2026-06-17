@@ -27,6 +27,7 @@
 | Standard Codex prompt header | Adopted | Makes future task boundaries explicit before each Codex session |
 | One branch per workstream | Adopted | Reduces merge conflicts and prevents overlapping Codex edits |
 | v0.2 PR checklist | Adopted | Provides a lightweight release gate for portfolio-quality maintenance |
+| Documentation-only Workstream 1 | Adopted | Protects the v0.1 pipeline while setting up future implementation workstreams |
 
 ## Coverage Matrix
 
@@ -73,6 +74,7 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - No flagged records CSV or audit log until v0.2.
 - v0.2 workstream contracts are documented, but implementation workstreams must still define exact schemas before code changes.
 - Future Codex sessions must include the standard prompt header to avoid scope drift.
+- `audit_log.json`, `flagged_records.csv`, unit warnings, and iterative extraction are still not implemented until later workstreams.
 
 ## Changelog
 

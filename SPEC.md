@@ -120,7 +120,7 @@ Expected result for the second command: only the root `SKILL.md` exists.
 Documentation-only workstreams should also confirm no core implementation files changed:
 
 ```bash
-git diff -- core rules scripts tests data reports run_audit.py requirements.txt
+git diff -- core rules scripts tests data reports examples run_audit.py requirements.txt
 ```
 
 Expected result: no diff.

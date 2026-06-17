@@ -37,35 +37,37 @@ Allowed: documentation and contract updates only.
 
 Primary files: `references/roadmap.md`, `SPEC.md`, `SOURCES.md`, and a tiny `SKILL.md` wording update if needed.
 
+Not allowed: code changes, child skills, new skill directories, another `SKILL.md`, web UI, full statistical modeling, external LLM API calls, LLM Council, automatic data cleaning, or new domain modules.
+
 ### Workstream 2 - Audit log contract
 
 Purpose: define and later implement `audit_log.json` as a structured audit trail.
 
 Allowed later: deterministic local metadata, warning summaries, run timestamp, input/output paths, and rule versions.
 
-Not allowed: storing real patient records, secrets, or full raw datasets.
+Not allowed: storing real patient records, secrets, full raw datasets, or external LLM outputs as authoritative evidence.
 
 ### Workstream 3 - Flagged records contract
 
 Purpose: define and later implement `flagged_records.csv` for issue evidence.
 
-Allowed later: row index, issue ID, variable, severity, issue type, and safe evidence summary.
+Allowed later: row index, issue ID, issue type, severity, variable, safe evidence summary, and human confirmation flag.
 
-Not allowed: automatic biomedical correction or overwriting source data.
+Not allowed: automatic biomedical correction, overwriting source data, or exposing sensitive identifiers.
 
 ### Workstream 4 - Unit warning contract
 
 Purpose: add warnings for possible unit ambiguity in biomedical variables.
 
-Allowed later: warning-only checks for height, weight, glucose, creatinine, temperature, blood pressure, and similar fields.
+Allowed later: warning-only checks for height, weight, glucose, creatinine, temperature, blood pressure, and similar fields, plus explicit human confirmation prompts.
 
-Not allowed: automatic unit conversion unless the user explicitly confirms the intended units.
+Not allowed: automatic unit conversion without confirmation or treating unit guesses as clinical truth.
 
 ### Workstream 5 - Missingness and analysis-readiness metrics
 
 Purpose: deepen missingness and key-variable risk summaries.
 
-Allowed later: missingness by variable role, outcome imbalance detail, sparse category detail, and simple missingness-by-group summaries.
+Allowed later: missingness by variable role, outcome imbalance detail, sparse category detail, simple missingness-by-group summaries, and model-readiness warnings.
 
 Not allowed: multiple imputation, fitted models, causal inference, or p-value-driven conclusions.
 
@@ -73,9 +75,9 @@ Not allowed: multiple imputation, fitted models, causal inference, or p-value-dr
 
 Purpose: define local deterministic request/response summaries that an AI assistant can ask for after reading the audit report.
 
-Allowed later: grouped summaries, missingness summaries, value counts, and mean/SD summaries.
+Allowed later: grouped summaries, missingness summaries, value counts, mean/SD summaries, and compact JSON request/response examples.
 
-Not allowed: external LLM API calls or AI inspection of raw rows.
+Not allowed: external LLM API calls, AI inspection of raw rows, uncontrolled query execution, or natural-language SQL over raw private data.
 
 ### Workstream 7 - Report contract and token metrics polish
 
@@ -164,11 +166,11 @@ Rules:
 - Do not let two Codex sessions edit the same file at the same time.
 - Use separate git worktrees for parallel workstreams.
 - Merge Workstream 1 before implementation-heavy v0.2 workstreams.
-- Documentation-only workstreams should not change `core/`, `rules/`, `scripts/`, `tests/`, `data/`, or `reports/`.
+- Documentation-only workstreams should not change `core/`, `rules/`, `scripts/`, `tests/`, `data/`, `reports/`, or `examples/`.
 - Code-changing workstreams must include validation output.
 - Each PR must state its active workstream and forbidden changes checked.
 
-## PR Checklist
+## v0.2 PR Checklist
 
 Every v0.2 PR must include:
 
