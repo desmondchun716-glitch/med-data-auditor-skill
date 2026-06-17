@@ -1,10 +1,18 @@
 # Med Data Auditor Skill
 
-A token-efficient Python workflow for auditing biomedical and public health datasets before AI-assisted statistical analysis.
+Token-efficient biomedical data analysis-readiness auditing for CSV datasets.
+
+This is not a generic data cleaning script. It is an audit-first workflow that scans biomedical and public health datasets locally, detects analysis-readiness risks, and produces a compact AI-ready Markdown report before any modeling or interpretation.
 
 ## Overview
 
-Med Data Auditor Skill is a token-efficient biomedical data analysis-readiness auditing workflow. It profiles biomedical and public health datasets locally, detects data quality issues, biomedical plausibility problems, statistical analysis risks, and privacy concerns, then generates compact AI-ready Markdown reports for iterative analysis.
+Med Data Auditor Skill profiles biomedical and public health datasets locally, detects data quality issues, biomedical plausibility problems, statistical analysis risks, and privacy concerns, then generates compact AI-ready Markdown reports for iterative analysis.
+
+The v0.1 promise is narrow and concrete:
+
+```text
+CSV + biomedical research question -> AI-ready analysis-readiness audit report
+```
 
 ## Why This Project Matters
 
@@ -17,6 +25,16 @@ This repository contains one main skill named `med-data-auditor-skill`. Future d
 ## Core Idea
 
 Programmatic scanning first, AI interpretation second. The program scans the full dataset locally; the AI reads only the compressed evidence report; the human confirms warnings before analysis decisions.
+
+## What v0.1 Does Not Do
+
+- No automatic data cleaning
+- No fitted statistical models
+- No odds ratios, p-values, or confidence intervals
+- No visualization or web UI
+- No external LLM API calls
+- No LLM Council or multi-agent review layer
+- No new domain modules
 
 ## Features
 
@@ -54,6 +72,16 @@ python run_audit.py \
 ```
 
 Open `reports/sample_audit_report.md` to review the generated audit.
+
+The command prints a short run summary and writes the full report to Markdown.
+
+Example CLI output:
+
+```text
+Wrote audit report to reports/sample_audit_report.md
+Warnings: medical=7, statistical=6, privacy=2, study_design=0
+Approximate token compression: 9236 -> 2130 (4.3:1)
+```
 
 ## Example Use Case
 
@@ -100,7 +128,7 @@ med-data-auditor-skill/
 └── tests/
 ```
 
-`SKILL.md` is the Agent Skills entrypoint. `core/` contains the internal business modules and support layers. The original design draft is preserved in `med_data_auditor_skill_spec.md`.
+`SKILL.md` is the Agent Skills entrypoint. `run_audit.py` is a thin CLI wrapper. `core/orchestrator.py` controls the workflow, and `core/` contains the internal business modules and support layers. The original design draft is preserved in `med_data_auditor_skill_spec.md`.
 
 ## Limitations
 
@@ -109,6 +137,7 @@ This project is for educational and research data-auditing workflows only.
 - Do not use it with identifiable patient data.
 - Do not upload real patient data to external AI tools.
 - It is not a clinical decision-making tool.
+- It does not diagnose disease, recommend treatment, or validate clinical truth.
 - It does not replace a statistician, clinical data manager, or regulatory-grade workflow.
 - It does not implement full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
 - All medical plausibility warnings require human confirmation.

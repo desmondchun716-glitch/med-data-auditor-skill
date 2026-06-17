@@ -35,6 +35,8 @@ def test_run_audit_writes_required_report_sections(tmp_path) -> None:
 
     report = output_path.read_text(encoding="utf-8")
     assert "# AI-ready Biomedical Data Audit Report" in report
+    assert "Executive Summary" in report
+    assert "Readiness verdict" in report
     assert "Biomedical Plausibility Warnings" in report
     assert "Statistical Risk Warnings" in report
     assert "Privacy / PII Warnings" in report

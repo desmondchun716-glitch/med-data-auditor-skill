@@ -16,9 +16,51 @@ def _list_or_none(values: list[str]) -> str:
     return ", ".join(f"`{value}`" for value in values) if values else "None identified"
 
 
+def _warning_counts(warnings: list[dict[str, Any]]) -> dict[str, int]:
+    counts = {severity: 0 for severity in SEVERITY_ORDER}
+    for warning in warnings:
+        severity = str(warning.get("severity", "medium"))
+        counts[severity] = counts.get(severity, 0) + 1
+    return counts
+
+
+def _readiness_verdict(warnings: list[dict[str, Any]]) -> str:
+    counts = _warning_counts(warnings)
+    if counts.get("critical", 0) or counts.get("high", 0):
+        return "Not ready for modeling: review critical and high-priority audit findings first."
+    if counts.get("medium", 0):
+        return "Conditionally ready for exploratory review after medium-priority findings are checked."
+    return "No major readiness blockers detected by v0.1 checks."
+
+
+def _render_warning_summary(warnings: list[dict[str, Any]]) -> str:
+    counts = _warning_counts(warnings)
+    return (
+        "| Critical | High | Medium | Low | Info |\n"
+        "|---:|---:|---:|---:|---:|\n"
+        f"| {counts.get('critical', 0)} | {counts.get('high', 0)} | {counts.get('medium', 0)} | {counts.get('low', 0)} | {counts.get('info', 0)} |\n"
+    )
+
+
+def _render_priority_findings(warnings: list[dict[str, Any]], limit: int = 6) -> str:
+    priority = sorted(
+        [warning for warning in warnings if warning.get("severity") in {"critical", "high"}],
+        key=lambda item: (SEVERITY_ORDER.get(str(item.get("severity")), 9), str(item.get("issue_id"))),
+    )
+    if not priority:
+        return "- No critical or high-priority findings detected by v0.1 checks.\n"
+    lines = []
+    for warning in priority[:limit]:
+        count = warning.get("count")
+        row_word = "row" if count == 1 else "rows"
+        count_text = f" ({count} affected {row_word})" if count is not None else ""
+        lines.append(f"- `{warning.get('issue_id')}` on `{warning.get('variable')}`{count_text}: {warning.get('description')}")
+    return "\n".join(lines) + "\n"
+
+
 def render_warning_section(warnings: list[dict[str, Any]], title: str | None = None) -> str:
     if not warnings:
-        return "No warnings detected.\n"
+        return "No warnings detected by v0.1 checks.\n"
     sorted_warnings = sorted(warnings, key=lambda item: (SEVERITY_ORDER.get(str(item.get("severity")), 9), str(item.get("issue_id"))))
     lines = [
         "| Severity | Issue | Variable | Count | Description | Recommended Action | Example Rows |",
@@ -193,53 +235,68 @@ def generate_markdown_report(
 
 {question}
 
-## 2. Dataset Overview
+## 2. Executive Summary
+
+**Readiness verdict:** {_readiness_verdict(all_warnings)}
+
+This v0.1 audit scanned the full CSV locally and generated a compact evidence report for biomedical analysis-readiness review. It did not clean the data, fit statistical models, call external LLM APIs, or make clinical decisions.
+
+**Warning summary**
+
+{_render_warning_summary(all_warnings)}
+**Priority findings**
+
+{_render_priority_findings(all_warnings)}
+## 3. Dataset Overview
 
 {render_dataset_overview(profile)}
-## 3. Relevant Variables and Study Design
+## 4. Relevant Variables and Study Design
 
 {render_variable_roles(variable_roles, study_design)}
 {render_warning_section(study_design_warnings)}
 
-## 4. Missing Data Summary
+## 5. Missing Data Summary
 
 {_missing_summary(profile, key_vars)}
 
-## 5. Biomedical Plausibility Warnings
+## 6. Biomedical Plausibility Warnings
 
 These warnings indicate potential plausibility issues. They do not prove that records are incorrect and require human confirmation.
 
 {render_warning_section(medical_warnings)}
 
-## 6. Statistical Risk Warnings
+## 7. Statistical Risk Warnings
 
 {render_warning_section(statistical_warnings)}
 
-## 7. Privacy / PII Warnings
+## 8. Privacy / PII Warnings
 
-Do not upload identifiable patient data to external AI tools.
+Do not upload identifiable patient data to external AI tools. Treat privacy warnings as blockers for external sharing until the data is de-identified or the field is removed, hashed, generalized, or otherwise handled according to the study policy.
 
 {render_warning_section(privacy_warnings)}
 
-## 8. Analysis-readiness Notes
+## 9. Analysis-readiness Notes
 
 {generate_recommended_analysis_plan(variable_roles, statistical_warnings + study_design_warnings, medical_warnings, profile)}
 
-## 9. Questions for Human Confirmation
+## 10. Questions for Human Confirmation
 
 {question_lines}
 
-## 10. Token-saving Summary
+## 11. Token-saving Summary
 
 The dataset contains {profile.get("n_rows")} records and {profile.get("n_columns")} variables. The user question maps to exposure {_list_or_none(variable_roles.get("exposure", []))}, outcome {_list_or_none(variable_roles.get("outcome", []))}, and confounders {_list_or_none(variable_roles.get("confounders", []))}. Major issues include {major_issue_text}. This report is designed to let an AI assistant reason from compact full-dataset evidence rather than raw row samples.
 
-## 11. Limitations and Safety Notes
+## 12. Limitations and Safety Notes
 
 - This report is not a clinical decision tool.
+- This report does not diagnose disease or recommend treatment.
 - This report does not verify real-world medical truth.
 - This workflow does not replace a statistician or clinical data manager.
 - This workflow should not be used with identifiable patient data.
+- Do not upload real patient data or direct identifiers to external AI systems.
 - Medical plausibility warnings require human confirmation.
+- Privacy warnings require review before external sharing.
 - v0.1 supports analysis-readiness review, not automatic causal inference.
 """
 

@@ -5,16 +5,17 @@ Use this file when editing `core/report_generator.py` or changing required repor
 ## Required Sections
 
 1. User Question
-2. Dataset Overview
-3. Relevant Variables and Study Design
-4. Missing Data Summary
-5. Biomedical Plausibility Warnings
-6. Statistical Risk Warnings
-7. Privacy / PII Warnings
-8. Analysis-readiness Notes
-9. Questions for Human Confirmation
-10. Token-saving Summary
-11. Limitations and Safety Notes
+2. Executive Summary
+3. Dataset Overview
+4. Relevant Variables and Study Design
+5. Missing Data Summary
+6. Biomedical Plausibility Warnings
+7. Statistical Risk Warnings
+8. Privacy / PII Warnings
+9. Analysis-readiness Notes
+10. Questions for Human Confirmation
+11. Token-saving Summary
+12. Limitations and Safety Notes
 
 ## Warning Schema
 
@@ -38,6 +39,8 @@ Each warning should preserve these fields when practical:
 
 - Prefer concrete evidence over vague wording.
 - Include counts, rates, variables, and example rows when available.
+- Start with an explicit readiness verdict.
+- Summarize priority critical/high findings before detailed tables.
 - Use association language unless a study design and analysis justify stronger wording.
 - State that medical plausibility warnings require human confirmation.
 - State that the report is not a clinical decision tool.

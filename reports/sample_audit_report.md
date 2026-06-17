@@ -4,7 +4,28 @@
 
 Is BMI associated with hypertension after adjusting for age and sex?
 
-## 2. Dataset Overview
+## 2. Executive Summary
+
+**Readiness verdict:** Not ready for modeling: review critical and high-priority audit findings first.
+
+This v0.1 audit scanned the full CSV locally and generated a compact evidence report for biomedical analysis-readiness review. It did not clean the data, fit statistical models, call external LLM APIs, or make clinical decisions.
+
+**Warning summary**
+
+| Critical | High | Medium | Low | Info |
+|---:|---:|---:|---:|---:|
+| 7 | 3 | 5 | 0 | 0 |
+
+**Priority findings**
+
+- `MED_DUPLICATE_PATIENT_ID` on `patient_id` (3 affected rows): Duplicate patient_id values were detected.
+- `MED_LOGIC_001` on `sbp, dbp` (1 affected row): Systolic blood pressure should not be lower than diastolic blood pressure.
+- `MED_LOGIC_002` on `death_date, visit_date` (1 affected row): Death date should not be earlier than visit date.
+- `MED_LOGIC_003` on `follow_up_days` (1 affected row): Follow-up time should not be negative.
+- `MED_RANGE_AGE` on `age` (2 affected rows): Age should be between 0 and 120 years.
+- `PRIV_DIRECT_IDENTIFIER` on `patient_name`: Potential direct identifier field detected.
+
+## 3. Dataset Overview
 
 - Rows: 300
 - Columns: 18
@@ -13,7 +34,7 @@ Is BMI associated with hypertension after adjusting for age and sex?
 - Duplicate rows: 0
 - Duplicate patient ID rows: 3
 
-## 3. Relevant Variables and Study Design
+## 4. Relevant Variables and Study Design
 
 - Exposure: `bmi`
 - Outcome: `hypertension`
@@ -24,10 +45,10 @@ Is BMI associated with hypertension after adjusting for age and sex?
 - Study design confidence: `low`
 - Study design note: v0.1 uses simple column-name heuristics; ask the user to confirm study design.
 
-No warnings detected.
+No warnings detected by v0.1 checks.
 
 
-## 4. Missing Data Summary
+## 5. Missing Data Summary
 
 | Variable | Missing Count | Missing Rate | Role |
 |---|---:|---:|---|
@@ -36,7 +57,7 @@ No warnings detected.
 | `hypertension` | 3 | 1.0% | key variable |
 
 
-## 5. Biomedical Plausibility Warnings
+## 6. Biomedical Plausibility Warnings
 
 These warnings indicate potential plausibility issues. They do not prove that records are incorrect and require human confirmation.
 
@@ -51,7 +72,7 @@ These warnings indicate potential plausibility issues. They do not prove that re
 | medium | MED_SEX_CODING_INCONSISTENCY | sex | 7 | Sex coding uses multiple representations that appear to map to the same concepts. | Standardize coding after confirming the intended values. |  |
 
 
-## 6. Statistical Risk Warnings
+## 7. Statistical Risk Warnings
 
 | Severity | Issue | Variable | Count | Description | Recommended Action | Example Rows |
 |---|---|---|---:|---|---|---|
@@ -63,9 +84,9 @@ These warnings indicate potential plausibility issues. They do not prove that re
 | medium | STAT_NEAR_UNIQUE_PATIENT_NAME | patient_name | 300 | Variable `patient_name` is near-unique and may behave like an identifier. | Do not use identifier-like variables as predictors without a clear plan. |  |
 
 
-## 7. Privacy / PII Warnings
+## 8. Privacy / PII Warnings
 
-Do not upload identifiable patient data to external AI tools.
+Do not upload identifiable patient data to external AI tools. Treat privacy warnings as blockers for external sharing until the data is de-identified or the field is removed, hashed, generalized, or otherwise handled according to the study policy.
 
 | Severity | Issue | Variable | Count | Description | Recommended Action | Example Rows |
 |---|---|---|---:|---|---|---|
@@ -73,11 +94,11 @@ Do not upload identifiable patient data to external AI tools.
 | critical | PRIV_DIRECT_IDENTIFIER | email |  | Potential direct identifier field detected. | Do not upload identifiable patient data to external AI tools. Remove, hash, or replace this field before analysis. |  |
 
 
-## 8. Analysis-readiness Notes
+## 9. Analysis-readiness Notes
 
 A binary-outcome association analysis may be considered after readiness issues are reviewed. The primary exposure is `bmi`, the outcome is `hypertension`, and the requested adjustment variables are `age`, `sex`. Do not proceed to modeling until these high-priority issues are reviewed: MED_RANGE_AGE on age; MED_RANGE_BMI on bmi; MED_LOGIC_001 on sbp, dbp; MED_LOGIC_002 on death_date, visit_date; MED_LOGIC_003 on follow_up_days. v0.1 does not fit statistical models or report model estimates. Interpret future results as association unless the study design and analysis plan justify causal language.
 
-## 9. Questions for Human Confirmation
+## 10. Questions for Human Confirmation
 
 - Please confirm `MED_RANGE_AGE` for `age`: Age should be between 0 and 120 years.
 - Please confirm `MED_RANGE_BMI` for `bmi`: BMI is outside the broad adult plausibility range.
@@ -88,17 +109,20 @@ A binary-outcome association analysis may be considered after readiness issues a
 - Please confirm `PRIV_DIRECT_IDENTIFIER` for `patient_name`: Potential direct identifier field detected.
 - Please confirm `PRIV_DIRECT_IDENTIFIER` for `email`: Potential direct identifier field detected.
 
-## 10. Token-saving Summary
+## 11. Token-saving Summary
 
 The dataset contains 300 records and 18 variables. The user question maps to exposure `bmi`, outcome `hypertension`, and confounders `age`, `sex`. Major issues include MED_RANGE_AGE (age); MED_RANGE_BMI (bmi); MED_LOGIC_001 (sbp, dbp); MED_LOGIC_002 (death_date, visit_date); MED_LOGIC_003 (follow_up_days); MED_DUPLICATE_PATIENT_ID (patient_id); STAT_KEY_MISSING_BMI (bmi); STAT_OUTCOME_IMBALANCE_HYPERTENSION (hypertension). This report is designed to let an AI assistant reason from compact full-dataset evidence rather than raw row samples.
 
-## 11. Limitations and Safety Notes
+## 12. Limitations and Safety Notes
 
 - This report is not a clinical decision tool.
+- This report does not diagnose disease or recommend treatment.
 - This report does not verify real-world medical truth.
 - This workflow does not replace a statistician or clinical data manager.
 - This workflow should not be used with identifiable patient data.
+- Do not upload real patient data or direct identifiers to external AI systems.
 - Medical plausibility warnings require human confirmation.
+- Privacy warnings require review before external sharing.
 - v0.1 supports analysis-readiness review, not automatic causal inference.
 
-Approximate source CSV tokens: 9236. Approximate report tokens: 1751. Compression ratio: 5.3:1.
+Approximate source CSV tokens: 9236. Approximate report tokens: 2130. Compression ratio: 4.3:1.

@@ -15,6 +15,18 @@ VALID_ISSUE_TYPES = {
     "token_compression",
 }
 
+REQUIRED_WARNING_FIELDS = {
+    "issue_id",
+    "issue_type",
+    "severity",
+    "variable",
+    "count",
+    "example_rows",
+    "description",
+    "recommended_action",
+    "human_confirmation_required",
+}
+
 
 @dataclass
 class AuditWarning:
@@ -59,3 +71,25 @@ def make_warning(
         recommended_action=recommended_action,
         human_confirmation_required=human_confirmation_required,
     ).to_dict()
+
+
+def validate_warning_schema(warning: dict[str, Any]) -> bool:
+    if set(warning.keys()) != REQUIRED_WARNING_FIELDS:
+        return False
+    if warning["severity"] not in VALID_SEVERITIES:
+        return False
+    if warning["issue_type"] not in VALID_ISSUE_TYPES:
+        return False
+    if not isinstance(warning["issue_id"], str) or not warning["issue_id"]:
+        return False
+    if warning["variable"] is not None and not isinstance(warning["variable"], str):
+        return False
+    if warning["count"] is not None and not isinstance(warning["count"], int):
+        return False
+    if not isinstance(warning["example_rows"], list):
+        return False
+    if not isinstance(warning["description"], str) or not warning["description"]:
+        return False
+    if not isinstance(warning["recommended_action"], str) or not warning["recommended_action"]:
+        return False
+    return isinstance(warning["human_confirmation_required"], bool)
