@@ -45,6 +45,7 @@ Programmatic scanning first, AI interpretation second. The program scans the ful
 - Potential identifier and privacy field detection
 - Question-driven exposure, outcome, and confounder mapping
 - AI-ready Markdown audit report
+- Optional privacy-safe machine-readable audit log JSON
 - Synthetic sample data with injected quality issues
 - Simple pytest coverage for the core checks
 
@@ -74,6 +75,18 @@ python run_audit.py \
 Open `reports/sample_audit_report.md` to review the generated audit.
 
 The command prints a short run summary and writes the full report to Markdown.
+
+Optional audit log output:
+
+```bash
+python run_audit.py \
+  --data data/sample_medical_data.csv \
+  --question "Is BMI associated with hypertension after adjusting for age and sex?" \
+  --output reports/sample_audit_report.md \
+  --audit-log-output reports/sample_audit_log.json
+```
+
+The audit log is designed for reproducibility and downstream tooling. It records audit evidence and warning summaries, not raw patient data.
 
 Example CLI output:
 

@@ -28,6 +28,7 @@
 | One branch per workstream | Adopted | Reduces merge conflicts and prevents overlapping Codex edits |
 | v0.2 PR checklist | Adopted | Provides a lightweight release gate for portfolio-quality maintenance |
 | Documentation-only Workstream 1 | Adopted | Protects the v0.1 pipeline while setting up future implementation workstreams |
+| WS2 audit log contract | Adopted | Adds a privacy-safe machine-readable audit trail without storing raw patient data |
 
 ## Coverage Matrix
 
@@ -71,10 +72,10 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - v0.1 token metrics are rough estimates for report compression only.
 - Rules are generic and should be expanded with domain-specific validation cases.
 - Variable role mapping is keyword-based and may need user confirmation.
-- No flagged records CSV or audit log until v0.2.
+- No flagged records CSV until WS3.
 - v0.2 workstream contracts are documented, but implementation workstreams must still define exact schemas before code changes.
 - Future Codex sessions must include the standard prompt header to avoid scope drift.
-- `audit_log.json`, `flagged_records.csv`, unit warnings, and iterative extraction are still not implemented until later workstreams.
+- `audit_log.json` is implemented as optional output, but `flagged_records.csv`, unit warnings, and iterative extraction are still not implemented until later workstreams.
 
 ## Changelog
 
@@ -83,3 +84,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - 2026-06-17: Adapted latest complete blueprint into a `core/` internal-module architecture with schemas, orchestrator, study design warnings, and stronger privacy checks.
 - 2026-06-17: Published the polished v0.1 repository to GitHub and kept future expansion in the roadmap.
 - 2026-06-17: Added v0.2 single-skill guardrails, seven internal workstreams, standard Codex prompt header, branch/worktree coordination rule, and PR checklist.
+- 2026-06-17: Added WS2 audit log contract and optional privacy-safe `audit_log.json` output implementation.

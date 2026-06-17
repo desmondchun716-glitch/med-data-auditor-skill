@@ -20,6 +20,8 @@ For v0.1, implement only the core analysis-readiness audit workflow: data intake
 python run_audit.py --data <csv_path> --question "<research question>" --output reports/audit_report.md
 ```
 
+When reproducibility or downstream tooling is needed, pass `--audit-log-output <path>` to generate a privacy-safe JSON audit trail.
+
 3. Read the generated Markdown report before giving analysis advice.
 4. Base recommendations on the report evidence: key variables, missingness, duplicates, plausibility warnings, privacy warnings, and statistical risks.
 5. Ask the user to confirm ambiguous variable meanings and any critical medical plausibility warnings before proceeding to analysis.
@@ -61,6 +63,7 @@ python run_audit.py --data <csv_path> --question "<research question>" --output 
 ## References
 
 - Read `references/report-contract.md` before changing report sections, warning schemas, or token-saving summaries.
+- Read `references/audit_log_contract.md` before changing audit log schema, audit log safety rules, or JSON output behavior.
 - Read `references/rules-guide.md` before adding or changing YAML rules.
 - Read `references/roadmap.md` before expanding beyond v0.1 scope.
 - Read `references/roadmap.md` before any v0.2 workstream, branch, or PR planning.

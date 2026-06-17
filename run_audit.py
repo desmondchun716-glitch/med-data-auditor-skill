@@ -13,6 +13,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--data", required=True, help="Input CSV dataset path.")
     parser.add_argument("--question", required=True, help="Biomedical or public health research question.")
     parser.add_argument("--output", required=True, help="Output Markdown report path.")
+    parser.add_argument(
+        "--audit-log-output",
+        default=None,
+        help="Optional output path for privacy-safe machine-readable audit log JSON.",
+    )
     parser.add_argument("--rules-dir", default=str(ROOT_DIR / "rules"), help="Directory containing YAML rule files.")
     return parser.parse_args()
 
@@ -27,10 +32,13 @@ def main() -> None:
         medical_rules_path=rules_dir / "medical_rules.yaml",
         statistical_rules_path=rules_dir / "statistical_rules.yaml",
         variable_dictionary_path=rules_dir / "variable_dictionary.yaml",
+        audit_log_output_path=args.audit_log_output,
     )
 
     warning_counts = summary["warning_counts"]
     print(f"Wrote audit report to {summary['output_path']}")
+    if summary.get("audit_log_path"):
+        print(f"Wrote audit log to {summary['audit_log_path']}")
     print(
         "Warnings: "
         f"intake={warning_counts['intake']}, "
