@@ -1,20 +1,20 @@
 # Report Contract
 
-Use this file when editing `scripts/07_generate_report.py` or changing required report sections.
+Use this file when editing `core/report_generator.py` or changing required report sections.
 
 ## Required Sections
 
 1. User Question
 2. Dataset Overview
-3. Relevant Variables
+3. Relevant Variables and Study Design
 4. Missing Data Summary
-5. Medical Plausibility Warnings
+5. Biomedical Plausibility Warnings
 6. Statistical Risk Warnings
-7. Privacy / Identifier Warnings
+7. Privacy / PII Warnings
 8. Analysis-readiness Notes
 9. Questions for Human Confirmation
 10. Token-saving Summary
-11. Limitations
+11. Limitations and Safety Notes
 
 ## Warning Schema
 
@@ -41,6 +41,7 @@ Each warning should preserve these fields when practical:
 - Use association language unless a study design and analysis justify stronger wording.
 - State that medical plausibility warnings require human confirmation.
 - State that the report is not a clinical decision tool.
+- State that v0.1 does not fit statistical models or report model estimates.
 
 ## Bad And Good Report Language
 

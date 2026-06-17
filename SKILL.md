@@ -17,25 +17,34 @@ For v0.1, implement only the core analysis-readiness audit workflow: data intake
 2. Run the local audit pipeline instead of asking the AI to inspect raw rows manually:
 
 ```bash
-python scripts/run_audit.py --data <csv_path> --question "<research question>" --output reports/audit_report.md
+python run_audit.py --data <csv_path> --question "<research question>" --output reports/audit_report.md
 ```
 
 3. Read the generated Markdown report before giving analysis advice.
 4. Base recommendations on the report evidence: key variables, missingness, duplicates, plausibility warnings, privacy warnings, and statistical risks.
 5. Ask the user to confirm ambiguous variable meanings and any critical medical plausibility warnings before proceeding to analysis.
 
+## Internal Module Contract
+
+| Module | Role |
+|---|---|
+| `core/intake.py` | Load CSV data safely and capture file metadata without modifying raw data |
+| `core/profiler.py` | Generate compact dataset profile, missingness, types, duplicates, and ID-like columns |
+| `core/variable_mapper.py` | Map question terms to exposure, outcome, confounders, and study design warnings |
+| `core/medical_rules.py` | Detect biomedical plausibility and data-quality warnings |
+| `core/statistical_risks.py` | Detect analysis-readiness risks before modeling |
+| `core/privacy_checker.py` | Detect privacy / PII fields and small-cell risks |
+| `core/report_generator.py` | Render the AI-ready Markdown report |
+| `core/schemas.py` | Define shared warning schema and issue categories |
+| `core/orchestrator.py` | Control module order and produce the final report |
+
 ## Script Contract
 
 | Script | Use | Output | Fallback |
 |---|---|---|---|
-| `scripts/01_generate_sample_data.py` | Create synthetic demo data with injected issues | `data/sample_medical_data.csv` | Create a small synthetic CSV manually, never real patient data |
-| `scripts/run_audit.py` | Run the full audit | Markdown report at `--output` | Run module scripts separately and summarize results |
-| `scripts/02_profile_data.py` | Profile rows, columns, types, missingness, duplicates | Python dict | Use pandas profiling snippets locally |
-| `scripts/03_rule_checks.py` | Apply medical plausibility and logic rules | Warning list | Inspect `rules/medical_rules.yaml` and run checks manually |
-| `scripts/04_statistical_risk_checks.py` | Detect analysis-readiness risks | Warning list | Report missingness/outcome/sparsity limits manually |
-| `scripts/05_relevant_variables.py` | Map question terms to exposure, outcome, confounders | Role mapping dict | Ask the user to confirm variable roles |
-| `scripts/06_privacy_checks.py` | Detect potential identifier fields | Warning list | Manually scan column names for direct identifiers |
-| `scripts/07_generate_report.py` | Render the AI-ready Markdown report | Markdown string | Use `references/report-contract.md` as the report template |
+| `scripts/generate_sample_data.py` | Create synthetic demo data with injected issues | `data/sample_medical_data.csv` | Create a small synthetic CSV manually, never real patient data |
+| `run_audit.py` | Run the full audit | Markdown report at `--output` | Call `core/orchestrator.py` directly and summarize results |
+| `scripts/*.py` compatibility wrappers | Preserve earlier script imports and commands | Delegates to `core/` modules | Use the corresponding `core/` module |
 
 ## Runtime Rules
 
@@ -61,8 +70,8 @@ python scripts/run_audit.py --data <csv_path> --question "<research question>" -
 Run these checks after modifying the skill or scripts:
 
 ```bash
-python scripts/01_generate_sample_data.py
-python scripts/run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md
+python scripts/generate_sample_data.py
+python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md
 python -m pytest
 ```
 

@@ -2,6 +2,10 @@
 
 A token-efficient Python workflow for auditing biomedical and public health datasets before AI-assisted statistical analysis.
 
+## Overview
+
+Med Data Auditor Skill is a token-efficient biomedical data analysis-readiness auditing workflow. It profiles biomedical and public health datasets locally, detects data quality issues, biomedical plausibility problems, statistical analysis risks, and privacy concerns, then generates compact AI-ready Markdown reports for iterative analysis.
+
 ## Why This Project Matters
 
 Large biomedical datasets are costly and unreliable for an AI assistant to inspect directly. This tool scans the full dataset locally, detects data quality and analysis-readiness risks, and generates a compact Markdown report that an AI assistant or human reviewer can use as evidence.
@@ -9,6 +13,10 @@ Large biomedical datasets are costly and unreliable for an AI assistant to inspe
 The project is intentionally small in v0.1: CSV input, pandas profiling, YAML rules, deterministic checks, and an AI-ready report. It does not clean the original data, make clinical decisions, or run production-grade clinical data management.
 
 This repository contains one main skill named `med-data-auditor-skill`. Future directions should become internal modules or roadmap items after the core workflow is strong enough, not separate skills.
+
+## Core Idea
+
+Programmatic scanning first, AI interpretation second. The program scans the full dataset locally; the AI reads only the compressed evidence report; the human confirms warnings before analysis decisions.
 
 ## Features
 
@@ -22,14 +30,24 @@ This repository contains one main skill named `med-data-auditor-skill`. Future d
 - Synthetic sample data with injected quality issues
 - Simple pytest coverage for the core checks
 
+## What It Checks
+
+- Data intake and file metadata
+- Data profiling and type detection
+- Biomedical plausibility warnings
+- Statistical analysis-readiness risks
+- Variable role mapping and basic study design warnings
+- Privacy / PII fields and small-cell risk
+- Token compression estimate
+
 ## Quick Start
 
 ```bash
 pip install -r requirements.txt
 
-python scripts/01_generate_sample_data.py
+python scripts/generate_sample_data.py
 
-python scripts/run_audit.py \
+python run_audit.py \
   --data data/sample_medical_data.csv \
   --question "Is BMI associated with hypertension after adjusting for age and sex?" \
   --output reports/sample_audit_report.md
@@ -47,6 +65,21 @@ Is BMI associated with hypertension after adjusting for age and sex?
 
 The auditor checks whether the dataset is ready for that analysis by reviewing key variables, BMI missingness, hypertension outcome balance, duplicate patient IDs, medical plausibility warnings, privacy-sensitive fields, and limitations such as association versus causation.
 
+## Example Output
+
+See `reports/sample_audit_report.md`.
+
+Synthetic demo issue coverage:
+
+| Injected issue | Detected in sample report |
+|---|---:|
+| Age range outlier rows | 2 |
+| BMI range outlier rows | 2 |
+| Duplicate patient ID rows | 3 |
+| SBP lower than DBP rows | 1 |
+| Death date before visit date rows | 1 |
+| Negative follow-up rows | 1 |
+
 ## Repository Layout
 
 ```text
@@ -56,6 +89,8 @@ med-data-auditor-skill/
 ├── SOURCES.md
 ├── README.md
 ├── requirements.txt
+├── run_audit.py
+├── core/
 ├── data/
 ├── examples/
 ├── references/
@@ -65,7 +100,7 @@ med-data-auditor-skill/
 └── tests/
 ```
 
-`SKILL.md` is the Agent Skills entrypoint. The original design draft is preserved in `med_data_auditor_skill_spec.md`.
+`SKILL.md` is the Agent Skills entrypoint. `core/` contains the internal business modules and support layers. The original design draft is preserved in `med_data_auditor_skill_spec.md`.
 
 ## Limitations
 

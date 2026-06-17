@@ -17,7 +17,7 @@ In scope:
 - Configurable medical plausibility rules
 - Statistical analysis-readiness checks
 - Potential identifier field detection
-- Question-driven exposure, outcome, and confounder mapping
+- Question-driven exposure, outcome, confounder mapping, and basic study design warnings
 - Synthetic sample data, sample report, and simple tests
 
 Out of scope:
@@ -41,8 +41,8 @@ Out of scope:
 
 ## Runtime Contract
 
-- Required first actions: verify privacy safety, run local scripts when a CSV is available, read the Markdown report before advising.
-- Required outputs: report with dataset overview, relevant variables, missingness, medical warnings, statistical warnings, privacy warnings, analysis-readiness notes, human confirmation questions, token-saving summary, and limitations.
+- Required first actions: verify privacy safety, run the local orchestrator when a CSV is available, read the Markdown report before advising.
+- Required outputs: report with dataset overview, relevant variables and study design, missingness, biomedical warnings, statistical warnings, privacy / PII warnings, analysis-readiness notes, human confirmation questions, token-saving summary, and limitations.
 - Non-negotiable constraints: never overwrite source data, never treat warnings as clinical truth, never upload identifiable patient data.
 - Expected bundled files loaded at runtime: `SKILL.md`; optional routed files in `references/` only when modifying reports, rules, or scope.
 
@@ -71,7 +71,8 @@ Data that must not be stored:
 
 - `SKILL.md` contains runtime activation, workflow, script contract, safety boundaries, and validation commands.
 - `references/` contains report contracts, rule authoring guidance, and roadmap scope control for one main skill.
-- `scripts/` contains deterministic data generation, profiling, checking, mapping, and report rendering code.
+- `core/` contains seven business modules plus `schemas.py` and `orchestrator.py`.
+- `scripts/` contains synthetic data generation and compatibility wrappers.
 - `rules/` contains YAML medical, statistical, and variable dictionary configuration.
 - `tests/` contains lightweight regression checks for the first version.
 

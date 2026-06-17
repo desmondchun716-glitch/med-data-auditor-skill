@@ -28,14 +28,14 @@ smoking:
     - smoking
     - smoker
     - tobacco
-  default_role: confounder
+  default_role: possible_confounder
 
 diabetes:
   synonyms:
     - diabetes
     - dm
     - type 2 diabetes
-  default_role: confounder
+  default_role: possible_confounder
 
 treatment_group:
   synonyms:

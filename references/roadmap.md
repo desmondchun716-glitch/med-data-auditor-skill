@@ -11,10 +11,17 @@ Do not create separate skills for future categories. Add future directions as in
 - YAML medical and statistical rules
 - privacy field detection
 - question-driven variable mapping
+- basic study design warnings
 - AI-ready Markdown report
 - synthetic sample data
 - simple tests
 - CLI command
+
+Internal structure:
+
+- seven business modules in `core/`
+- `core/schemas.py` for warning shape
+- `core/orchestrator.py` for module order
 
 Do not add full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
 
@@ -27,6 +34,7 @@ Do not add full statistical modeling, visualization, web UI, LLM Council, or aut
 - missingness mechanism screening
 - iterative extraction requests
 - token compression metrics
+- cleaning suggestions only, no automatic biomedical correction
 
 ## v0.3 Candidates
 
@@ -45,6 +53,7 @@ Do not add full statistical modeling, visualization, web UI, LLM Council, or aut
 - multi-file cohort linkage
 - CDISC SDTM / ADaM concept checker
 - web interface
+- LLM Council-style structured-output review
 
 ## Expansion Gate
 

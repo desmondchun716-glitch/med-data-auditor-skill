@@ -9,16 +9,23 @@ Is BMI associated with hypertension after adjusting for age and sex?
 - Rows: 300
 - Columns: 18
 - Variable type summary: 6 categorical, 2 date, 3 identifier-like, 7 numeric
+- Potential ID columns: `patient_id`, `patient_name`, `email`
 - Duplicate rows: 0
 - Duplicate patient ID rows: 3
 
-## 3. Relevant Variables
+## 3. Relevant Variables and Study Design
 
 - Exposure: `bmi`
 - Outcome: `hypertension`
 - Confounders: `age`, `sex`
 - Suggested additional confounders: `smoking`, `diabetes`
 - Unavailable variables from question: None identified
+- Inferred study design: `trial_or_longitudinal_like`
+- Study design confidence: `low`
+- Study design note: v0.1 uses simple column-name heuristics; ask the user to confirm study design.
+
+No warnings detected.
+
 
 ## 4. Missing Data Summary
 
@@ -29,7 +36,7 @@ Is BMI associated with hypertension after adjusting for age and sex?
 | `hypertension` | 3 | 1.0% | key variable |
 
 
-## 5. Medical Plausibility Warnings
+## 5. Biomedical Plausibility Warnings
 
 These warnings indicate potential plausibility issues. They do not prove that records are incorrect and require human confirmation.
 
@@ -51,15 +58,12 @@ These warnings indicate potential plausibility issues. They do not prove that re
 | high | STAT_KEY_MISSING_BMI | bmi | 70 | Key variable `bmi` has 70 missing values (23.3%). | Assess missingness before complete-case analysis or modeling. |  |
 | high | STAT_OUTCOME_IMBALANCE_HYPERTENSION | hypertension | 297 | Outcome `hypertension` is imbalanced: `No` is 92.9% of non-missing values. | Inspect event counts before logistic regression or classification. |  |
 | medium | STAT_EXTREME_OUTLIERS_BMI | bmi | 1 | Variable `bmi` has 1 extreme numeric outliers by a 3*IQR rule. | Inspect outliers and confirm units before modeling. | 3 |
-| medium | STAT_HIGH_CARDINALITY_EMAIL | email | 300 | Variable `email` has high cardinality (300 levels). | Review whether this is an identifier, free text, or unsuitable categorical predictor. |  |
-| medium | STAT_HIGH_CARDINALITY_PATIENT_ID | patient_id | 298 | Variable `patient_id` has high cardinality (298 levels). | Review whether this is an identifier, free text, or unsuitable categorical predictor. |  |
-| medium | STAT_HIGH_CARDINALITY_PATIENT_NAME | patient_name | 300 | Variable `patient_name` has high cardinality (300 levels). | Review whether this is an identifier, free text, or unsuitable categorical predictor. |  |
 | medium | STAT_NEAR_UNIQUE_EMAIL | email | 300 | Variable `email` is near-unique and may behave like an identifier. | Do not use identifier-like variables as predictors without a clear plan. |  |
 | medium | STAT_NEAR_UNIQUE_PATIENT_ID | patient_id | 298 | Variable `patient_id` is near-unique and may behave like an identifier. | Do not use identifier-like variables as predictors without a clear plan. |  |
 | medium | STAT_NEAR_UNIQUE_PATIENT_NAME | patient_name | 300 | Variable `patient_name` is near-unique and may behave like an identifier. | Do not use identifier-like variables as predictors without a clear plan. |  |
 
 
-## 7. Privacy / Identifier Warnings
+## 7. Privacy / PII Warnings
 
 Do not upload identifiable patient data to external AI tools.
 
@@ -88,7 +92,7 @@ A binary-outcome association analysis may be considered after readiness issues a
 
 The dataset contains 300 records and 18 variables. The user question maps to exposure `bmi`, outcome `hypertension`, and confounders `age`, `sex`. Major issues include MED_RANGE_AGE (age); MED_RANGE_BMI (bmi); MED_LOGIC_001 (sbp, dbp); MED_LOGIC_002 (death_date, visit_date); MED_LOGIC_003 (follow_up_days); MED_DUPLICATE_PATIENT_ID (patient_id); STAT_KEY_MISSING_BMI (bmi); STAT_OUTCOME_IMBALANCE_HYPERTENSION (hypertension). This report is designed to let an AI assistant reason from compact full-dataset evidence rather than raw row samples.
 
-## 11. Limitations
+## 11. Limitations and Safety Notes
 
 - This report is not a clinical decision tool.
 - This report does not verify real-world medical truth.
@@ -97,4 +101,4 @@ The dataset contains 300 records and 18 variables. The user question maps to exp
 - Medical plausibility warnings require human confirmation.
 - v0.1 supports analysis-readiness review, not automatic causal inference.
 
-Approximate source CSV tokens: 9236. Approximate report tokens: 1810. Compression ratio: 5.1:1.
+Approximate source CSV tokens: 9236. Approximate report tokens: 1751. Compression ratio: 5.3:1.
