@@ -56,12 +56,14 @@ python run_audit.py --data <csv_path> --question "<research question>" --output 
 - Do not implement full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
 - Prefer association language unless study design and analysis justify stronger wording.
 - If the report is missing key variables or has critical warnings, stop and ask for human confirmation before modeling advice.
+- For v0.2 maintenance, require the standard Codex prompt header from `references/roadmap.md` before making changes.
 
 ## References
 
 - Read `references/report-contract.md` before changing report sections, warning schemas, or token-saving summaries.
 - Read `references/rules-guide.md` before adding or changing YAML rules.
 - Read `references/roadmap.md` before expanding beyond v0.1 scope.
+- Read `references/roadmap.md` before any v0.2 workstream, branch, or PR planning.
 - Read `SPEC.md` when maintaining scope, validation expectations, or evidence policy.
 - Read `SOURCES.md` when checking provenance, decisions, gaps, and changelog history.
 

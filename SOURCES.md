@@ -23,6 +23,10 @@
 | GitHub upload | Completed | Published after v0.1 workflow polish, validation, and user approval |
 | `core/` module architecture | Adopted | The latest blueprint clarifies seven business modules and two support layers |
 | Basic study design warnings | Adopted for v0.1 | Warnings support analysis readiness without performing modeling |
+| v0.2 as internal workstreams | Adopted | Keeps future work inside one main skill and prevents Codex from creating child skills |
+| Standard Codex prompt header | Adopted | Makes future task boundaries explicit before each Codex session |
+| One branch per workstream | Adopted | Reduces merge conflicts and prevents overlapping Codex edits |
+| v0.2 PR checklist | Adopted | Provides a lightweight release gate for portfolio-quality maintenance |
 
 ## Coverage Matrix
 
@@ -67,6 +71,8 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - Rules are generic and should be expanded with domain-specific validation cases.
 - Variable role mapping is keyword-based and may need user confirmation.
 - No flagged records CSV or audit log until v0.2.
+- v0.2 workstream contracts are documented, but implementation workstreams must still define exact schemas before code changes.
+- Future Codex sessions must include the standard prompt header to avoid scope drift.
 
 ## Changelog
 
@@ -74,3 +80,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - 2026-06-17: Tightened scope to one main skill and deferred new feature work until after v0.1 approval.
 - 2026-06-17: Adapted latest complete blueprint into a `core/` internal-module architecture with schemas, orchestrator, study design warnings, and stronger privacy checks.
 - 2026-06-17: Published the polished v0.1 repository to GitHub and kept future expansion in the roadmap.
+- 2026-06-17: Added v0.2 single-skill guardrails, seven internal workstreams, standard Codex prompt header, branch/worktree coordination rule, and PR checklist.
