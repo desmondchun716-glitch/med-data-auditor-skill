@@ -46,6 +46,7 @@ Programmatic scanning first, AI interpretation second. The program scans the ful
 - Question-driven exposure, outcome, and confounder mapping
 - AI-ready Markdown audit report
 - Optional privacy-safe machine-readable audit log JSON
+- Optional privacy-safe flagged records CSV for row-level warning references
 - Synthetic sample data with injected quality issues
 - Simple pytest coverage for the core checks
 
@@ -88,10 +89,25 @@ python run_audit.py \
 
 The audit log is designed for reproducibility and downstream tooling. It records audit evidence and warning summaries, not raw patient data.
 
+Optional flagged records output:
+
+```bash
+python run_audit.py \
+  --data data/sample_medical_data.csv \
+  --question "Is BMI associated with hypertension after adjusting for age and sex?" \
+  --output reports/sample_audit_report.md \
+  --audit-log-output reports/sample_audit_log.json \
+  --flagged-records-output reports/sample_flagged_records.csv
+```
+
+The flagged records CSV records safe issue evidence and row references from existing warnings. It does not store raw patient rows or raw cell values.
+
 Example CLI output:
 
 ```text
 Wrote audit report to reports/sample_audit_report.md
+Wrote audit log to reports/sample_audit_log.json
+Wrote flagged records to reports/sample_flagged_records.csv
 Warnings: intake=0, medical=7, statistical=6, privacy=2, study_design=0
 Approximate token compression: 9236 -> 2130 (4.3:1)
 ```

@@ -64,6 +64,16 @@ It may include run metadata, safe file metadata, rule fingerprints, dataset shap
 
 It must not include raw rows, raw cell values, direct identifier values, secrets, full raw datasets, or external LLM outputs as authoritative evidence.
 
+### WS3 Flagged Records Contract
+
+WS3 adds an optional `flagged_records.csv` output. The flagged records CSV is a privacy-safe row-reference issue index for human confirmation and downstream tooling.
+
+It may include schema version, issue ID, issue type, severity, variable, row reference, source warning count, sanitized warning description, sanitized recommended action, and human confirmation flag.
+
+It must be generated only when explicitly requested. It must not include raw rows, raw cell values, direct identifier values, clinical free text, corrected values, automatic cleaning actions, secrets, or external LLM output.
+
+Warnings with `example_rows` produce one CSV row per example row. Warnings without `example_rows` stay in the Markdown report and optional audit log only.
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.
@@ -138,6 +148,7 @@ Code-changing v0.2 work must additionally pass:
 ```bash
 python scripts/generate_sample_data.py
 python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md
+python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md --audit-log-output reports/sample_audit_log.json --flagged-records-output reports/sample_flagged_records.csv
 python -m pytest
 ```
 
