@@ -74,6 +74,16 @@ It must be generated only when explicitly requested. It must not include raw row
 
 Warnings with `example_rows` produce one CSV row per example row. Warnings without `example_rows` stay in the Markdown report and optional audit log only.
 
+### WS4 Unit Warning Contract
+
+WS4 adds deterministic warning-only checks for possible biomedical unit or scale mismatches.
+
+Unit warnings use the existing `AuditWarning` schema with `issue_type="medical_plausibility"`, `UNIT_`-prefixed issue IDs, cautious descriptions, affected-row counts, example row indexes, and required human confirmation.
+
+The initial checks cover explicitly labeled blood pressure, temperature, percent/fraction, height, weight, glucose, creatinine, and lipid fields. They use conservative majority-pattern heuristics and do not infer a unit for generic unlabeled laboratory variables.
+
+WS4 must not convert units, mutate source data, create cleaned output, repeat raw values in warning text, add a new issue type, make clinical claims, or implement later v0.2 workstreams.
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.

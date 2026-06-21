@@ -7,6 +7,7 @@ import pandas as pd
 import yaml
 
 from .schemas import make_warning
+from .unit_warnings import check_unit_warnings
 
 
 DEFAULT_RULES = Path(__file__).resolve().parents[1] / "rules" / "medical_rules.yaml"
@@ -185,6 +186,7 @@ def check_medical_rules(
     warnings: list[dict[str, Any]] = []
     warnings.extend(check_numeric_range_rules(df, loaded_rules))
     warnings.extend(check_cross_field_rules(df, loaded_rules))
+    warnings.extend(check_unit_warnings(df))
     warnings.extend(check_duplicate_patient_id(df))
     warnings.extend(check_coding_inconsistency(df))
     return warnings
