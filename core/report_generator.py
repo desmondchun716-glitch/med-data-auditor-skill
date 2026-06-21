@@ -129,6 +129,55 @@ def _missing_summary(profile: dict[str, Any], key_vars: list[str]) -> str:
     return "\n".join(lines) + "\n"
 
 
+def _missingness_readiness_summary(profile: dict[str, Any]) -> str:
+    metrics = profile.get("missingness_readiness") or {}
+    if not metrics:
+        return "Missingness readiness metrics are not available.\n"
+
+    key_variables = metrics.get("key_variables") or []
+    key_rate = metrics.get("complete_case_rate_for_key_variables")
+    key_text = (
+        f"{key_rate:.1%} across {_list_or_none(key_variables)}"
+        if key_rate is not None
+        else "not assessed because no exposure, outcome, or confounder variables were mapped"
+    )
+    pairs = metrics.get("top_missingness_cooccurrence_pairs") or []
+    if pairs:
+        pair_lines = "\n".join(
+            (
+                f"- `{pair['variable_a']}` + `{pair['variable_b']}`: "
+                f"{pair['joint_missing_count']} rows ({pair['joint_missing_rate']:.1%})"
+            )
+            for pair in pairs[:5]
+        )
+    else:
+        pair_lines = "- No co-occurring missingness pairs detected."
+
+    flags = metrics.get("readiness_flags") or []
+    flag_text = ", ".join(f"`{flag}`" for flag in flags) if flags else "none detected"
+    return f"""### Key-variable complete-case readiness
+
+- Complete-case rate for mapped key variables: {key_text}
+- Rows missing any mapped key variable: {metrics.get("rows_missing_any_key_variable") if key_rate is not None else "not assessed"}
+
+### Row-level missingness burden
+
+- Rows with any missing value: {metrics.get("rows_with_any_missing", 0)} ({metrics.get("rows_with_any_missing_rate", 0):.1%})
+- Rows missing at least {metrics.get("high_row_missing_fraction", 0.30):.0%} of columns: {metrics.get("rows_with_high_missing_burden", 0)} ({metrics.get("rows_with_high_missing_burden_rate", 0):.1%})
+- Overall missing-cell rate: {metrics.get("overall_missing_cell_rate", 0):.1%}
+
+### Missingness co-occurrence screening
+
+{pair_lines}
+
+### Missingness mechanism screening caveat
+
+{metrics.get("mechanism_screening_caveat", "This screening is evidence triage and requires human review.")}
+
+- Readiness flags: {flag_text}
+"""
+
+
 def generate_recommended_analysis_plan(
     variable_roles: dict[str, Any],
     statistical_warnings: list[dict[str, Any]],
@@ -258,6 +307,7 @@ This v0.1 audit scanned the full CSV locally and generated a compact evidence re
 ## 5. Missing Data Summary
 
 {_missing_summary(profile, key_vars)}
+{_missingness_readiness_summary(profile)}
 
 ## 6. Biomedical Plausibility Warnings
 

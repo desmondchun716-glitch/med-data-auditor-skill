@@ -7,6 +7,7 @@ from .audit_log import build_audit_log, save_audit_log
 from .flagged_records import build_flagged_records, save_flagged_records
 from .intake import intake_dataset
 from .medical_rules import check_medical_rules
+from .missingness_readiness import build_missingness_readiness_metrics
 from .privacy_checker import check_privacy_risks
 from .profiler import profile_dataset
 from .report_generator import estimate_token_compression, generate_markdown_report, save_report
@@ -34,6 +35,7 @@ def run_audit(
     df, metadata, intake_warnings = intake_dataset(data_path)
     profile = profile_dataset(df)
     variable_roles = identify_variable_roles(question, list(df.columns), dictionary_path=variable_dictionary_path)
+    profile["missingness_readiness"] = build_missingness_readiness_metrics(df, variable_roles=variable_roles)
     study_design = infer_basic_study_design(df, list(df.columns))
     study_design_warnings = generate_study_design_warnings(question, variable_roles, study_design)
     medical_warnings = check_medical_rules(df, rules_path=medical_rules_path)
