@@ -30,6 +30,7 @@
 | Documentation-only Workstream 1 | Adopted | Protects the v0.1 pipeline while setting up future implementation workstreams |
 | WS2 audit log contract | Adopted | Adds a privacy-safe machine-readable audit trail without storing raw patient data |
 | WS3 flagged records contract | Adopted | Adds an optional row-reference issue index without exporting raw patient data |
+| WS4 warning-only unit checks | Adopted | Adds conservative deterministic unit-risk evidence without conversion, raw-value leakage, or schema expansion |
 
 ## Coverage Matrix
 
@@ -76,7 +77,7 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - WS3 flagged records are implemented as an optional CSV output; future work should keep the contract privacy-safe.
 - Later v0.2 implementation workstreams must still define exact schemas before code changes.
 - Future Codex sessions must include the standard prompt header to avoid scope drift.
-- `audit_log.json` and `flagged_records.csv` are implemented as optional outputs, but unit warnings and iterative extraction are still not implemented until later workstreams.
+- `audit_log.json`, `flagged_records.csv`, and warning-only unit checks are implemented; later v0.2 workstreams remain intentionally unimplemented.
 
 ## Changelog
 
@@ -87,3 +88,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - 2026-06-17: Added v0.2 single-skill guardrails, seven internal workstreams, standard Codex prompt header, branch/worktree coordination rule, and PR checklist.
 - 2026-06-17: Added WS2 audit log contract and optional privacy-safe `audit_log.json` output implementation.
 - 2026-06-17: Added WS3 flagged records contract and optional privacy-safe `flagged_records.csv` output implementation.
+- 2026-06-21: Added WS4 deterministic warning-only checks for possible biomedical unit and scale mismatches.
