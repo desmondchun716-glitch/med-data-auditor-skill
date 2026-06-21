@@ -7,6 +7,7 @@ import json
 import uuid
 from typing import Any
 
+from .extraction_requests import validate_extraction_requests_schema
 from .schemas import validate_warning_schema
 
 
@@ -136,6 +137,7 @@ def build_audit_log(
     profile: dict[str, Any],
     variable_roles: dict[str, Any],
     study_design: dict[str, Any],
+    extraction_requests: list[dict[str, Any]],
     intake_warnings: list[dict[str, Any]],
     study_design_warnings: list[dict[str, Any]],
     medical_warnings: list[dict[str, Any]],
@@ -195,6 +197,7 @@ def build_audit_log(
         "analysis_context": {
             "variable_roles": variable_roles,
             "study_design": study_design,
+            "extraction_requests": extraction_requests,
         },
         "warnings": {
             "counts": counts,
@@ -265,6 +268,14 @@ def validate_audit_log_schema(audit_log: dict[str, Any]) -> bool:
     if sum(counts_by_severity.values()) != total_count or sum(counts_by_issue_type.values()) != total_count:
         return False
     if not all(isinstance(item, dict) and validate_warning_schema(item) for item in items):
+        return False
+    analysis_context = audit_log.get("analysis_context")
+    if not isinstance(analysis_context, dict):
+        return False
+    extraction_requests = analysis_context.get("extraction_requests")
+    if not isinstance(extraction_requests, list) or not validate_extraction_requests_schema(
+        extraction_requests
+    ):
         return False
     privacy = audit_log.get("privacy_safety")
     if not isinstance(privacy, dict):

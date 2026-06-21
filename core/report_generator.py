@@ -231,6 +231,36 @@ def _confirmation_questions(variable_roles: dict[str, Any], warnings: list[dict[
     return questions[:10]
 
 
+def render_extraction_requests(extraction_requests: list[dict[str, Any]]) -> str:
+    caveat = (
+        "These requests ask for metadata, column names, definitions, coding rules, units, and "
+        "de-identification confirmation. Do not provide raw patient rows or direct identifier values."
+    )
+    if not extraction_requests:
+        return f"{caveat}\n\nNo structured iterative extraction requests were generated beyond routine review.\n"
+
+    lines = [
+        caveat,
+        "",
+        "| Priority | Request Type | Related Variables | Request | Safe Response |",
+        "|---|---|---|---|---|",
+    ]
+    for request in extraction_requests[:10]:
+        related_variables = ", ".join(
+            f"`{variable}`" for variable in request.get("related_variables", [])
+        ) or "None"
+        lines.append(
+            "| {priority} | {request_type} | {related_variables} | {question} | {safe_response} |".format(
+                priority=_escape(request.get("priority", "")),
+                request_type=_escape(request.get("request_type", "")),
+                related_variables=_escape(related_variables),
+                question=_escape(request.get("question", "")),
+                safe_response=_escape(request.get("safe_response_guidance", "")),
+            )
+        )
+    return "\n".join(lines) + "\n"
+
+
 def estimate_token_compression(data_path: str | Path | None, report_text: str) -> dict[str, Any]:
     raw_tokens = 1
     if data_path is not None:
@@ -259,6 +289,7 @@ def generate_markdown_report(
     privacy_warnings: list[dict[str, Any]] | None = None,
     study_design: dict[str, Any] | None = None,
     study_design_warnings: list[dict[str, Any]] | None = None,
+    extraction_requests: list[dict[str, Any]] | None = None,
     token_metrics: dict[str, Any] | None = None,
     data_path: str | Path | None = None,
 ) -> str:
@@ -267,6 +298,7 @@ def generate_markdown_report(
     statistical_warnings = statistical_warnings or []
     privacy_warnings = privacy_warnings or []
     study_design_warnings = study_design_warnings or []
+    extraction_requests = extraction_requests or []
 
     key_vars: list[str] = []
     for role in ("exposure", "outcome", "confounders"):
@@ -329,15 +361,18 @@ Do not upload identifiable patient data to external AI tools. Treat privacy warn
 
 {generate_recommended_analysis_plan(variable_roles, statistical_warnings + study_design_warnings, medical_warnings, profile)}
 
-## 10. Questions for Human Confirmation
+## 10. Iterative Extraction Requests
+
+{render_extraction_requests(extraction_requests)}
+## 11. Questions for Human Confirmation
 
 {question_lines}
 
-## 11. Token-saving Summary
+## 12. Token-saving Summary
 
 The dataset contains {profile.get("n_rows")} records and {profile.get("n_columns")} variables. The user question maps to exposure {_list_or_none(variable_roles.get("exposure", []))}, outcome {_list_or_none(variable_roles.get("outcome", []))}, and confounders {_list_or_none(variable_roles.get("confounders", []))}. Major issues include {major_issue_text}. This report is designed to let an AI assistant reason from compact full-dataset evidence rather than raw row samples.
 
-## 12. Limitations and Safety Notes
+## 13. Limitations and Safety Notes
 
 - This report is not a clinical decision tool.
 - This report does not diagnose disease or recommend treatment.

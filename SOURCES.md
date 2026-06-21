@@ -8,6 +8,7 @@
 | `med_data_auditor_skill_complete_blueprint.md` | High | Latest one-skill architecture, seven internal modules, schemas/orchestrator layers, study design warnings, PII/small-cell privacy notes | Adapted into `core/` modules, docs, report contract, and roadmap |
 | `skill-writer` local skill | High | Skill synthesis, authoring, description optimization, validation workflow | Used to choose workflow-process class and script-backed shape |
 | `skill-creator` local skill | High | Agent Skills structure, frontmatter, validation, optional `agents/openai.yaml` | Used for `SKILL.md` and metadata shape |
+| `WS6 LLM Council + Codex Implementation Plan` | High | Iterative extraction schema, triggers, privacy boundary, integration points, tests, and release checklist | Adapted into deterministic local code and contract documentation; council content was planning only |
 
 ## Synthesis Decisions
 
@@ -32,6 +33,9 @@
 | WS3 flagged records contract | Adopted | Adds an optional row-reference issue index without exporting raw patient data |
 | WS4 warning-only unit checks | Adopted | Adds conservative deterministic unit-risk evidence without conversion, raw-value leakage, or schema expansion |
 | WS5 missingness readiness evidence | Adopted | Adds role-aware complete-case, row-burden, near-empty-column, and co-occurrence metrics without imputation or missingness-mechanism classification |
+| WS6 metadata-only iterative extraction protocol | Adopted | Converts existing audit evidence into safe, prioritized human questions without raw-data extraction, external calls, or dataset mutation |
+| New WS6 output file or CLI flag | Rejected | The Markdown report and existing audit-log analysis context already provide the needed human and machine-readable surfaces |
+| LLM Council runtime | Rejected | The council was a planning framework only; runtime behavior remains deterministic Python |
 
 ## Coverage Matrix
 
@@ -43,6 +47,7 @@
 | Expected outputs | AI-ready Markdown report plus sample data and tests |
 | Failure handling | SKILL.md lists script fallbacks and asks for human confirmation on ambiguity |
 | Validation | Sample data generation, CLI run, pytest, structural skill validator |
+| Iterative extraction | Deterministic request schema, grouped evidence triggers, privacy-safe guidance, report rendering, and audit-log nesting under `analysis_context` |
 
 ## Source Adaptation Notes
 
@@ -51,6 +56,8 @@
 - Fidelity boundary: preserve v0.1 scope, safety limits, deterministic program/AI division, report sections, and roadmap.
 - Local replacements: use `SKILL.md` instead of lowercase `skill.md`; use `core/` internal modules instead of separate skills; split maintenance and provenance into `SPEC.md` and `SOURCES.md`.
 - Omitted material: long narrative explanations from the design draft are not repeated in runtime files.
+- WS6 source intent: turn audit findings into safe questions about metadata and confirmations before analysis.
+- WS6 fidelity boundary: preserve request schema, priority, deduplication, privacy, report, and audit-log behavior while omitting any LLM Council runtime or automated extraction.
 
 ## Description Optimization
 
@@ -76,9 +83,9 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - Rules are generic and should be expanded with domain-specific validation cases.
 - Variable role mapping is keyword-based and may need user confirmation.
 - WS3 flagged records are implemented as an optional CSV output; future work should keep the contract privacy-safe.
-- Later v0.2 implementation workstreams must still define exact schemas before code changes.
+- WS7 report and token-metrics polish remains intentionally unimplemented.
 - Future Codex sessions must include the standard prompt header to avoid scope drift.
-- `audit_log.json`, `flagged_records.csv`, warning-only unit checks, and missingness-readiness metrics are implemented; later v0.2 workstreams remain intentionally unimplemented.
+- `audit_log.json`, `flagged_records.csv`, warning-only unit checks, missingness-readiness metrics, and iterative extraction requests are implemented; WS7 remains intentionally unimplemented.
 
 ## Changelog
 
@@ -91,3 +98,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - 2026-06-17: Added WS3 flagged records contract and optional privacy-safe `flagged_records.csv` output implementation.
 - 2026-06-21: Added WS4 deterministic warning-only checks for possible biomedical unit and scale mismatches.
 - 2026-06-21: Added WS5 deterministic, privacy-safe missingness and analysis-readiness metrics.
+- 2026-06-21: Added WS6 deterministic, privacy-safe iterative extraction requests in the report and audit-log analysis context.

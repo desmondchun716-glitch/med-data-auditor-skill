@@ -4,6 +4,7 @@ from pathlib import Path
 from typing import Any
 
 from .audit_log import build_audit_log, save_audit_log
+from .extraction_requests import build_extraction_requests
 from .flagged_records import build_flagged_records, save_flagged_records
 from .intake import intake_dataset
 from .medical_rules import check_medical_rules
@@ -48,6 +49,13 @@ def run_audit(
         *statistical_warnings,
         *privacy_warnings,
     ]
+    extraction_requests = build_extraction_requests(
+        question=question,
+        profile=profile,
+        variable_roles=variable_roles,
+        study_design=study_design,
+        warnings=all_warnings,
+    )
 
     report_without_metrics = generate_markdown_report(
         question=question,
@@ -58,6 +66,7 @@ def run_audit(
         privacy_warnings=privacy_warnings,
         study_design=study_design,
         study_design_warnings=study_design_warnings,
+        extraction_requests=extraction_requests,
         data_path=data_path,
     )
     token_metrics = estimate_token_compression(data_path, report_without_metrics)
@@ -70,6 +79,7 @@ def run_audit(
         privacy_warnings=privacy_warnings,
         study_design=study_design,
         study_design_warnings=study_design_warnings,
+        extraction_requests=extraction_requests,
         token_metrics=token_metrics,
         data_path=data_path,
     )
@@ -86,6 +96,7 @@ def run_audit(
             profile=profile,
             variable_roles=variable_roles,
             study_design=study_design,
+            extraction_requests=extraction_requests,
             intake_warnings=intake_warnings,
             study_design_warnings=study_design_warnings,
             medical_warnings=medical_warnings,
@@ -115,6 +126,7 @@ def run_audit(
         "profile": profile,
         "variable_roles": variable_roles,
         "study_design": study_design,
+        "extraction_requests": extraction_requests,
         "warning_counts": {
             "intake": len(intake_warnings),
             "study_design": len(study_design_warnings),
