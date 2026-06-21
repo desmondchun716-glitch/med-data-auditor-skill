@@ -94,6 +94,18 @@ WS5 metrics are stored inside the existing profile and `audit_log.json` dataset 
 
 WS5 must not impute, mutate the source DataFrame, drop rows or columns, create cleaned output, fit models, classify MCAR/MAR/MNAR, analyze sensitive subgroup missingness, or implement WS6/WS7.
 
+### WS6 Iterative Extraction Protocol
+
+WS6 adds deterministic, privacy-safe next-step requests generated from variable-role gaps, study-design uncertainty, unit warnings, missingness evidence, privacy warnings, outcome coding needs, repeated patient IDs, population ambiguity, and time-window evidence.
+
+Each request includes a deterministic ID, priority, request type, trigger source, related variables and issue IDs, a concise question, analysis-readiness rationale, expected response type, safe-response guidance, and required human confirmation.
+
+Requests are deduplicated, limited to 10 by default, rendered in the Markdown report, and stored under `audit_log.json` `analysis_context.extraction_requests`.
+
+WS6 must not request raw patient rows or direct identifier values, call external services, automate data extraction, mutate the source dataset, add a new CLI flag, add a new output file, add a new audit-log top-level key, change the flagged-record schema, clean or impute data, convert units, fit models, or implement WS7.
+
+The detailed runtime contract is in `references/iterative_extraction_protocol.md`.
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.
@@ -103,7 +115,7 @@ WS5 must not impute, mutate the source DataFrame, drop rows or columns, create c
 ## Runtime Contract
 
 - Required first actions: verify privacy safety, run the local orchestrator when a CSV is available, read the Markdown report before advising.
-- Required outputs: report with dataset overview, relevant variables and study design, missingness, biomedical warnings, statistical warnings, privacy / PII warnings, analysis-readiness notes, human confirmation questions, token-saving summary, and limitations.
+- Required outputs: report with dataset overview, relevant variables and study design, missingness, biomedical warnings, statistical warnings, privacy / PII warnings, analysis-readiness notes, iterative extraction requests, human confirmation questions, token-saving summary, and limitations.
 - Non-negotiable constraints: never overwrite source data, never treat warnings as clinical truth, never upload identifiable patient data.
 - Expected bundled files loaded at runtime: `SKILL.md`; optional routed files in `references/` only when modifying reports, rules, or scope.
 
@@ -131,8 +143,8 @@ Data that must not be stored:
 ## Reference Architecture
 
 - `SKILL.md` contains runtime activation, workflow, script contract, safety boundaries, and validation commands.
-- `references/` contains report contracts, rule authoring guidance, and roadmap scope control for one main skill.
-- `core/` contains seven business modules plus `schemas.py` and `orchestrator.py`.
+- `references/` contains report contracts, iterative extraction guidance, rule authoring guidance, and roadmap scope control for one main skill.
+- `core/` contains the internal business modules plus `schemas.py` and `orchestrator.py`.
 - `scripts/` contains synthetic data generation and compatibility wrappers.
 - `rules/` contains YAML medical, statistical, and variable dictionary configuration.
 - `tests/` contains lightweight regression checks for the first version.
