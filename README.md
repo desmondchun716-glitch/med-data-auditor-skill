@@ -43,6 +43,7 @@ Programmatic scanning first, AI interpretation second. The program scans the ful
 - Configurable medical plausibility checks
 - Warning-only checks for possible biomedical unit or scale mismatches
 - Statistical analysis-readiness warnings
+- Privacy-safe missingness pattern and key-variable complete-case readiness metrics
 - Potential identifier and privacy field detection
 - Question-driven exposure, outcome, and confounder mapping
 - AI-ready Markdown audit report
@@ -58,6 +59,7 @@ Programmatic scanning first, AI interpretation second. The program scans the ful
 - Biomedical plausibility warnings
 - Possible unit mismatches for explicitly labeled blood pressure, temperature, percent/fraction, height, weight, glucose, creatinine, and lipid fields
 - Statistical analysis-readiness risks
+- Row-level missingness burden, near-empty columns, key-variable complete cases, and co-occurring missingness patterns
 - Variable role mapping and basic study design warnings
 - Privacy / PII fields and small-cell risk
 - Token compression estimate
@@ -179,6 +181,7 @@ This project is for educational and research data-auditing workflows only.
 - v0.1: CSV audit, YAML rules, deterministic warnings, AI-ready report.
 - v0.2: flagged records, audit logs, unit warnings, expanded audit metrics, iterative extraction requests.
 - WS4 unit warnings are deterministic and warning-only; they never convert values or modify the source dataset.
+- WS5 missingness readiness uses deterministic counts, rates, and flags; it does not impute data or classify MCAR/MAR/MNAR.
 - v0.3: Table 1 readiness, logistic regression readiness, basic exploratory outputs, clinical trial demo data.
 - v0.4+: Excel/SAS/Stata support, DuckDB, Great Expectations, CDISC concept checks, web UI.
 

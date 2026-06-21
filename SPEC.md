@@ -84,6 +84,16 @@ The initial checks cover explicitly labeled blood pressure, temperature, percent
 
 WS4 must not convert units, mutate source data, create cleaned output, repeat raw values in warning text, add a new issue type, make clinical claims, or implement later v0.2 workstreams.
 
+### WS5 Missingness And Analysis-Readiness Contract
+
+WS5 adds deterministic, privacy-safe missingness evidence to the existing profiler and statistical warning pipeline.
+
+It includes dataset-level missingness metrics, row-level burden, role-aware complete-case readiness for exposure/outcome/confounders, near-empty columns, top co-occurring missingness pairs, and transparent readiness flags.
+
+WS5 metrics are stored inside the existing profile and `audit_log.json` dataset summary. WS5 warnings use the existing `AuditWarning` schema and existing `data_quality` or `statistical_risk` issue types.
+
+WS5 must not impute, mutate the source DataFrame, drop rows or columns, create cleaned output, fit models, classify MCAR/MAR/MNAR, analyze sensitive subgroup missingness, or implement WS6/WS7.
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.

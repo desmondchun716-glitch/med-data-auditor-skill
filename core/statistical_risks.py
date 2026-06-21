@@ -7,6 +7,7 @@ import pandas as pd
 import yaml
 from pandas.api.types import is_numeric_dtype
 
+from .missingness_readiness import check_missingness_readiness
 from .schemas import make_warning
 
 
@@ -291,6 +292,14 @@ def check_statistical_risks(
             variable_roles,
             high_threshold=missing_rules.get("high_missing_rate", 0.20),
             critical_threshold=missing_rules.get("critical_missing_rate", 0.40),
+        )
+    )
+    warnings.extend(
+        check_missingness_readiness(
+            df,
+            variable_roles=variable_roles,
+            high_missing_rate=missing_rules.get("high_missing_rate", 0.20),
+            critical_missing_rate=missing_rules.get("critical_missing_rate", 0.40),
         )
     )
     for outcome in [var for var in variable_roles.get("outcome", []) if var in df.columns]:

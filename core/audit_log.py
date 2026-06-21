@@ -56,6 +56,7 @@ def _safe_dataset_summary(profile: dict[str, Any]) -> dict[str, Any]:
         "columns": list(profile.get("columns") or []),
         "variable_types": dict(profile.get("variable_types") or {}),
         "missing_summary": missing_summary,
+        "missingness_readiness": dict(profile.get("missingness_readiness") or {}),
         "potential_id_columns": list(profile.get("potential_id_columns") or []),
     }
 

@@ -7,6 +7,7 @@ import pandas as pd
 from pandas.api.types import is_numeric_dtype
 
 from .intake import load_dataset
+from .missingness_readiness import build_missingness_readiness_metrics
 
 
 def _to_float(value: Any) -> float | None:
@@ -125,6 +126,7 @@ def profile_dataset(df: pd.DataFrame, id_column: str = "patient_id") -> dict[str
         "columns": list(df.columns),
         "variable_types": variable_types,
         "missing_summary": profile_missingness(df),
+        "missingness_readiness": build_missingness_readiness_metrics(df),
         "numeric_summary": profile_numeric_variables(df, variable_types),
         "categorical_summary": profile_categorical_variables(df, variable_types),
         "date_summary": profile_date_variables(df, variable_types),
