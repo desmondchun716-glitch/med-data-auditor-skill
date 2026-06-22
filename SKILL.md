@@ -62,7 +62,7 @@ When reproducibility or downstream tooling is needed, pass `--audit-log-output <
 
 ## References
 
-- Read `references/report-contract.md` before changing report sections, warning schemas, or token-saving summaries.
+- Read `references/report_contract.md` before changing report sections, warning schemas, or token-saving summaries.
 - Read `references/audit_log_contract.md` before changing audit log schema, audit log safety rules, or JSON output behavior.
 - Read `references/rules-guide.md` before adding or changing YAML rules.
 - Read `references/roadmap.md` before expanding beyond v0.1 scope.

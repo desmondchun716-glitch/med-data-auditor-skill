@@ -106,6 +106,28 @@ WS6 must not request raw patient rows or direct identifier values, call external
 
 The detailed runtime contract is in `references/iterative_extraction_protocol.md`.
 
+### WS7 Report And Token Metrics Contract
+
+WS7 finalizes the existing Markdown report and token metrics as the last v0.2
+workstream.
+
+The report keeps a stable 13-section order from `User Question` through
+`Limitations and Safety Notes`. It remains compact, deterministic,
+evidence-based, and free of raw row samples or raw cell values.
+
+Token metrics remain under the existing audit-log `token_metrics` key. They
+record the character-based estimation method, source and report character
+counts, approximate token counts, compression ratio, warning count, report
+section count, and an explicit caveat that the values are not exact tokenizer
+output. The older `original_csv_estimated_tokens` field remains available as a
+backward-compatible alias.
+
+WS7 must not add new audit domains, warning types, CLI flags, output files,
+audit-log top-level keys, tokenizer dependencies, external API calls, cleaning,
+imputation, unit conversion, statistical modeling, or v0.3 behavior.
+
+The detailed runtime contract is in `references/report_contract.md`.
+
 ## Users And Trigger Context
 
 - Primary users: biomedical, public health, clinical research, RWE, CRO, MCM/ICM, and health survey learners or analysts.
@@ -191,7 +213,7 @@ The PR must explain if any command is not run.
 - Variable role mapping uses keyword matching, not advanced NLP.
 - Medical plausibility rules are generic and require human confirmation.
 - Statistical risk checks are readiness warnings, not formal modeling.
-- Token estimates are rough in v0.1.
+- v0.2 token estimates are transparent character-based engineering estimates, not exact tokenizer counts.
 
 ## Maintenance Notes
 

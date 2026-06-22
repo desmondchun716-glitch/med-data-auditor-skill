@@ -277,6 +277,58 @@ def validate_audit_log_schema(audit_log: dict[str, Any]) -> bool:
         extraction_requests
     ):
         return False
+    token_metrics = audit_log.get("token_metrics")
+    required_token_metric_keys = {
+        "estimation_method",
+        "source_csv_character_count",
+        "source_csv_estimated_tokens",
+        "original_csv_estimated_tokens",
+        "audit_report_character_count",
+        "audit_report_estimated_tokens",
+        "compression_ratio",
+        "warning_count",
+        "report_section_count",
+        "notes",
+    }
+    if not isinstance(token_metrics, dict) or not required_token_metric_keys <= set(token_metrics):
+        return False
+    if token_metrics.get("estimation_method") != "approx_chars_div_4":
+        return False
+    source_character_count = token_metrics.get("source_csv_character_count")
+    if source_character_count is not None and (
+        not isinstance(source_character_count, int)
+        or isinstance(source_character_count, bool)
+        or source_character_count < 0
+    ):
+        return False
+    for key in (
+        "source_csv_estimated_tokens",
+        "original_csv_estimated_tokens",
+        "audit_report_estimated_tokens",
+    ):
+        value = token_metrics.get(key)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 1:
+            return False
+    for key in ("audit_report_character_count", "warning_count"):
+        value = token_metrics.get(key)
+        if not isinstance(value, int) or isinstance(value, bool) or value < 0:
+            return False
+    if token_metrics.get("source_csv_estimated_tokens") != token_metrics.get(
+        "original_csv_estimated_tokens"
+    ):
+        return False
+    compression_ratio = token_metrics.get("compression_ratio")
+    if (
+        not isinstance(compression_ratio, (int, float))
+        or isinstance(compression_ratio, bool)
+        or compression_ratio <= 0
+    ):
+        return False
+    if token_metrics.get("report_section_count") != 13:
+        return False
+    notes = token_metrics.get("notes")
+    if not isinstance(notes, str) or "approximate" not in notes.lower() or "not exact tokenizer" not in notes.lower():
+        return False
     privacy = audit_log.get("privacy_safety")
     if not isinstance(privacy, dict):
         return False

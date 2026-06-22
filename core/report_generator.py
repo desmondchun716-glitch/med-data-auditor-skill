@@ -3,12 +3,19 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
+from .token_metrics import build_token_metrics
+
 
 SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3, "info": 4}
+REPORT_SECTION_COUNT = 13
+
+
+def _release_neutral_text(value: Any) -> str:
+    return ("" if value is None else str(value)).replace("v0.1", "this workflow")
 
 
 def _escape(value: Any) -> str:
-    text = "" if value is None else str(value)
+    text = _release_neutral_text(value)
     return text.replace("|", "\\|").replace("\n", " ")
 
 
@@ -30,7 +37,7 @@ def _readiness_verdict(warnings: list[dict[str, Any]]) -> str:
         return "Not ready for modeling: review critical and high-priority audit findings first."
     if counts.get("medium", 0):
         return "Conditionally ready for exploratory review after medium-priority findings are checked."
-    return "No major readiness blockers detected by v0.1 checks."
+    return "No major readiness blockers detected by v0.2 checks."
 
 
 def _render_warning_summary(warnings: list[dict[str, Any]]) -> str:
@@ -48,19 +55,22 @@ def _render_priority_findings(warnings: list[dict[str, Any]], limit: int = 6) ->
         key=lambda item: (SEVERITY_ORDER.get(str(item.get("severity")), 9), str(item.get("issue_id"))),
     )
     if not priority:
-        return "- No critical or high-priority findings detected by v0.1 checks.\n"
+        return "- No critical or high-priority findings detected by v0.2 checks.\n"
     lines = []
     for warning in priority[:limit]:
         count = warning.get("count")
         row_word = "row" if count == 1 else "rows"
         count_text = f" ({count} affected {row_word})" if count is not None else ""
-        lines.append(f"- `{warning.get('issue_id')}` on `{warning.get('variable')}`{count_text}: {warning.get('description')}")
+        lines.append(
+            f"- `{warning.get('issue_id')}` on `{warning.get('variable')}`{count_text}: "
+            f"{_release_neutral_text(warning.get('description'))}"
+        )
     return "\n".join(lines) + "\n"
 
 
 def render_warning_section(warnings: list[dict[str, Any]], title: str | None = None) -> str:
     if not warnings:
-        return "No warnings detected by v0.1 checks.\n"
+        return "No warnings detected by v0.2 checks.\n"
     sorted_warnings = sorted(warnings, key=lambda item: (SEVERITY_ORDER.get(str(item.get("severity")), 9), str(item.get("issue_id"))))
     lines = [
         "| Severity | Issue | Variable | Count | Description | Recommended Action | Example Rows |",
@@ -100,6 +110,9 @@ def render_dataset_overview(profile: dict[str, Any]) -> str:
 
 def render_variable_roles(variable_roles: dict[str, Any], study_design: dict[str, Any] | None = None) -> str:
     design = study_design or {}
+    design_note = _release_neutral_text(
+        design.get("note", "Ask the user to confirm study design.")
+    )
     return f"""- Exposure: {_list_or_none(variable_roles.get("exposure", []))}
 - Outcome: {_list_or_none(variable_roles.get("outcome", []))}
 - Confounders: {_list_or_none(variable_roles.get("confounders", []))}
@@ -107,7 +120,7 @@ def render_variable_roles(variable_roles: dict[str, Any], study_design: dict[str
 - Unavailable variables from question: {_list_or_none(variable_roles.get("unavailable_variables", []))}
 - Inferred study design: `{design.get("inferred_design", "not assessed")}`
 - Study design confidence: `{design.get("confidence", "not assessed")}`
-- Study design note: {design.get("note", "Ask the user to confirm study design.")}
+- Study design note: {design_note}
 """
 
 
@@ -213,7 +226,7 @@ def generate_recommended_analysis_plan(
     if high_priority:
         top = "; ".join(f"{w.get('issue_id')} on {w.get('variable')}" for w in high_priority[:5])
         plan += f"Do not proceed to modeling until these high-priority issues are reviewed: {top}. "
-    plan += "v0.1 does not fit statistical models or report model estimates. Interpret future results as association unless the study design and analysis plan justify causal language."
+    plan += "This workflow does not fit statistical models or report model estimates. Interpret future results as association unless the study design and analysis plan justify causal language."
     return plan
 
 
@@ -227,7 +240,10 @@ def _confirmation_questions(variable_roles: dict[str, Any], warnings: list[dict[
         questions.append("The question mentions variables not found in the dataset: " + ", ".join(variable_roles["unavailable_variables"]) + ". Are the column names different?")
     for warning in warnings:
         if warning.get("human_confirmation_required") and warning.get("severity") in {"critical", "high"}:
-            questions.append(f"Please confirm `{warning.get('issue_id')}` for `{warning.get('variable')}`: {warning.get('description')}")
+            questions.append(
+                f"Please confirm `{warning.get('issue_id')}` for `{warning.get('variable')}`: "
+                f"{_release_neutral_text(warning.get('description'))}"
+            )
     return questions[:10]
 
 
@@ -261,22 +277,17 @@ def render_extraction_requests(extraction_requests: list[dict[str, Any]]) -> str
     return "\n".join(lines) + "\n"
 
 
-def estimate_token_compression(data_path: str | Path | None, report_text: str) -> dict[str, Any]:
-    raw_tokens = 1
-    if data_path is not None:
-        try:
-            text = Path(data_path).read_text(encoding="utf-8")
-        except UnicodeDecodeError:
-            text = Path(data_path).read_text(encoding="utf-8", errors="ignore")
-        except OSError:
-            text = ""
-        raw_tokens = max(1, len(text) // 4)
-    report_tokens = max(1, len(report_text) // 4)
-    return {
-        "original_csv_estimated_tokens": raw_tokens,
-        "audit_report_estimated_tokens": report_tokens,
-        "compression_ratio": round(raw_tokens / report_tokens, 1),
-    }
+def estimate_token_compression(
+    data_path: str | Path | None,
+    report_text: str,
+    warning_count: int = 0,
+) -> dict[str, Any]:
+    return build_token_metrics(
+        data_path=data_path,
+        report_text=report_text,
+        warning_count=warning_count,
+        report_section_count=REPORT_SECTION_COUNT,
+    )
 
 
 def generate_markdown_report(
@@ -320,7 +331,7 @@ def generate_markdown_report(
 
 **Readiness verdict:** {_readiness_verdict(all_warnings)}
 
-This v0.1 audit scanned the full CSV locally and generated a compact evidence report for biomedical analysis-readiness review. It did not clean the data, fit statistical models, call external LLM APIs, or make clinical decisions.
+This v0.2 audit scanned the full CSV locally and generated a compact evidence report for biomedical analysis-readiness review. It did not clean the data, fit statistical models, call external LLM APIs, or make clinical decisions.
 
 **Warning summary**
 
@@ -375,22 +386,30 @@ The dataset contains {profile.get("n_rows")} records and {profile.get("n_columns
 ## 13. Limitations and Safety Notes
 
 - This report is not a clinical decision tool.
-- This report does not diagnose disease or recommend treatment.
+- This report does not diagnose disease.
+- This report does not recommend treatment.
 - This report does not verify real-world medical truth.
+- This workflow does not fit statistical models or report model estimates.
+- This workflow does not clean data or modify the source dataset.
 - This workflow does not replace a statistician or clinical data manager.
 - This workflow should not be used with identifiable patient data.
 - Do not upload real patient data or direct identifiers to external AI systems.
 - Medical plausibility warnings require human confirmation.
 - Privacy warnings require review before external sharing.
-- v0.1 supports analysis-readiness review, not automatic causal inference.
+- This workflow supports analysis-readiness review, not automatic causal inference.
 """
 
-    metrics = token_metrics or estimate_token_compression(data_path, body)
+    metrics = token_metrics or estimate_token_compression(
+        data_path,
+        body,
+        warning_count=len(all_warnings),
+    )
     token_note = (
         "\nApproximate source CSV tokens: {raw}. Approximate report tokens: {report}. "
-        "Compression ratio: {ratio}:1.\n"
+        "Compression ratio: {ratio}:1. "
+        "Method: character-count / 4 estimate; not exact tokenizer output.\n"
     ).format(
-        raw=metrics.get("original_csv_estimated_tokens"),
+        raw=metrics.get("source_csv_estimated_tokens", metrics.get("original_csv_estimated_tokens")),
         report=metrics.get("audit_report_estimated_tokens"),
         ratio=metrics.get("compression_ratio"),
     )
