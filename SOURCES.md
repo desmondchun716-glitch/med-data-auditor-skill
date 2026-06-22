@@ -9,6 +9,7 @@
 | `skill-writer` local skill | High | Skill synthesis, authoring, description optimization, validation workflow | Used to choose workflow-process class and script-backed shape |
 | `skill-creator` local skill | High | Agent Skills structure, frontmatter, validation, optional `agents/openai.yaml` | Used for `SKILL.md` and metadata shape |
 | `WS6 LLM Council + Codex Implementation Plan` | High | Iterative extraction schema, triggers, privacy boundary, integration points, tests, and release checklist | Adapted into deterministic local code and contract documentation; council content was planning only |
+| `WS7 LLM Council + Codex Implementation Plan` | High | Final v0.2 report order, token metric shape, privacy boundaries, tests, and release checklist | Adapted into the report contract, local token metrics helper, audit-log validation, and regression tests; council content was planning only |
 
 ## Synthesis Decisions
 
@@ -36,6 +37,9 @@
 | WS6 metadata-only iterative extraction protocol | Adopted | Converts existing audit evidence into safe, prioritized human questions without raw-data extraction, external calls, or dataset mutation |
 | New WS6 output file or CLI flag | Rejected | The Markdown report and existing audit-log analysis context already provide the needed human and machine-readable surfaces |
 | LLM Council runtime | Rejected | The council was a planning framework only; runtime behavior remains deterministic Python |
+| WS7 stable report contract | Adopted | Locks the existing 13-section report order and compact evidence policy without adding a new output |
+| Character-based token metrics | Adopted | Improves transparency and audit traceability without an external tokenizer dependency or exact-token claim |
+| New WS7 output or CLI flag | Rejected | Existing report, audit log, and flagged-record outputs are sufficient |
 
 ## Coverage Matrix
 
@@ -79,13 +83,12 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 
 ## Open Gaps
 
-- v0.1 token metrics are rough estimates for report compression only.
+- Token metrics remain approximate character-based engineering estimates and must not be interpreted as exact tokenizer counts.
 - Rules are generic and should be expanded with domain-specific validation cases.
 - Variable role mapping is keyword-based and may need user confirmation.
 - WS3 flagged records are implemented as an optional CSV output; future work should keep the contract privacy-safe.
-- WS7 report and token-metrics polish remains intentionally unimplemented.
 - Future Codex sessions must include the standard prompt header to avoid scope drift.
-- `audit_log.json`, `flagged_records.csv`, warning-only unit checks, missingness-readiness metrics, and iterative extraction requests are implemented; WS7 remains intentionally unimplemented.
+- All seven v0.2 workstreams are implemented; release tagging remains a separate post-merge step.
 
 ## Changelog
 
@@ -99,3 +102,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - 2026-06-21: Added WS4 deterministic warning-only checks for possible biomedical unit and scale mismatches.
 - 2026-06-21: Added WS5 deterministic, privacy-safe missingness and analysis-readiness metrics.
 - 2026-06-21: Added WS6 deterministic, privacy-safe iterative extraction requests in the report and audit-log analysis context.
+- 2026-06-22: Finalized the WS7 v0.2 report contract, runtime wording, approximate token metrics, audit-log validation, and regression tests.

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import copy
 import json
 
 import pandas as pd
@@ -133,3 +134,32 @@ def test_existing_warning_items_match_warning_schema(tmp_path) -> None:
     assert warning_items
     assert all(set(item.keys()) == REQUIRED_WARNING_FIELDS for item in warning_items)
     assert all(validate_warning_schema(item) for item in warning_items)
+
+
+def test_audit_log_token_metrics_schema(tmp_path) -> None:
+    data_path = tmp_path / "demo.csv"
+    report_path = tmp_path / "report.md"
+    audit_log_path = tmp_path / "audit_log.json"
+    _write_demo_csv(data_path)
+
+    summary = run_audit(data_path, QUESTION, report_path, audit_log_output_path=audit_log_path)
+    audit_log = summary["audit_log"]
+    required_metric_keys = {
+        "estimation_method",
+        "source_csv_character_count",
+        "source_csv_estimated_tokens",
+        "original_csv_estimated_tokens",
+        "audit_report_character_count",
+        "audit_report_estimated_tokens",
+        "compression_ratio",
+        "warning_count",
+        "report_section_count",
+        "notes",
+    }
+
+    assert required_metric_keys <= set(audit_log["token_metrics"])
+    assert validate_audit_log_schema(audit_log)
+
+    invalid = copy.deepcopy(audit_log)
+    invalid["token_metrics"].pop("estimation_method")
+    assert validate_audit_log_schema(invalid) is False

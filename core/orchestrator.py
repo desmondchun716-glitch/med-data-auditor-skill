@@ -69,7 +69,11 @@ def run_audit(
         extraction_requests=extraction_requests,
         data_path=data_path,
     )
-    token_metrics = estimate_token_compression(data_path, report_without_metrics)
+    token_metrics = estimate_token_compression(
+        data_path,
+        report_without_metrics,
+        warning_count=len(all_warnings),
+    )
     report = generate_markdown_report(
         question=question,
         profile=profile,
