@@ -1,10 +1,27 @@
 # Roadmap And Scope Control
 
-Use this file before expanding beyond the first version.
+Use this file before expanding beyond the current stable release.
 
 Do not create separate skills for future categories. Add future directions as internal modules, scripts, rules, references, or roadmap items inside the single `med-data-auditor-skill` project.
 
-## v0.1 Only
+## Current Stable Release
+
+`v0.2.0` is the current stable portfolio release.
+
+Completed:
+
+- audit log contract
+- flagged records contract
+- unit warning contract
+- missingness-readiness metrics
+- iterative extraction protocol
+- report contract and token metrics polish
+
+Next:
+
+- v0.3 planning only after v0.2.0 validation and tag.
+
+## v0.1 Foundation
 
 - CSV input
 - pandas profiling
@@ -23,11 +40,13 @@ Internal structure:
 - `core/schemas.py` for warning shape
 - `core/orchestrator.py` for module order
 
-Do not add full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
+The v0.1 foundation did not include full statistical modeling, visualization, web UI, LLM Council runtime, or automatic data cleaning. Those boundaries remain active in v0.2.0.
 
-## v0.2 Internal Workstreams
+## v0.2.0 Completed Internal Workstreams
 
-v0.2 must remain inside the single `med-data-auditor-skill` architecture. Do not create child skills, new skill directories, or another `SKILL.md`.
+v0.2.0 remains inside the single `med-data-auditor-skill` architecture. Do not create child skills, new skill directories, or another `SKILL.md`.
+
+All seven workstreams below are complete in v0.2.0. Future maintenance should preserve their contracts unless a new version explicitly revises scope.
 
 ### Workstream 1 - Single-skill guardrails and v0.2 contract
 
@@ -41,17 +60,17 @@ Not allowed: code changes, child skills, new skill directories, another `SKILL.m
 
 ### Workstream 2 - Audit log contract
 
-Purpose: define and later implement `audit_log.json` as a structured audit trail.
+Purpose: define and implement `audit_log.json` as a structured audit trail.
 
-Allowed later: deterministic local metadata, warning summaries, run timestamp, input/output paths, and rule versions.
+Implemented: deterministic local metadata, warning summaries, run timestamp, input/output paths, rule versions, missingness-readiness evidence, extraction requests, and token metrics.
 
 Not allowed: storing real patient records, secrets, full raw datasets, or external LLM outputs as authoritative evidence.
 
 ### Workstream 3 - Flagged records contract
 
-Purpose: define and later implement `flagged_records.csv` for issue evidence.
+Purpose: define and implement `flagged_records.csv` for issue evidence.
 
-Allowed later: row index, issue ID, issue type, severity, variable, safe evidence summary, and human confirmation flag.
+Implemented: row index, issue ID, issue type, severity, variable, safe evidence summary, and human confirmation flag.
 
 Not allowed: automatic biomedical correction, overwriting source data, or exposing sensitive identifiers.
 
@@ -59,7 +78,7 @@ Not allowed: automatic biomedical correction, overwriting source data, or exposi
 
 Purpose: add warnings for possible unit ambiguity in biomedical variables.
 
-Allowed later: warning-only checks for height, weight, glucose, creatinine, temperature, blood pressure, and similar fields, plus explicit human confirmation prompts.
+Implemented: warning-only checks for height, weight, glucose, creatinine, temperature, blood pressure, and similar fields, plus explicit human confirmation prompts.
 
 Not allowed: automatic unit conversion without confirmation or treating unit guesses as clinical truth.
 
@@ -67,7 +86,7 @@ Not allowed: automatic unit conversion without confirmation or treating unit gue
 
 Purpose: deepen missingness and key-variable risk summaries.
 
-Allowed later: missingness by variable role, outcome imbalance detail, sparse category detail, simple missingness-by-group summaries, and model-readiness warnings.
+Implemented: missingness by variable role, row-level burden, near-empty columns, key-variable complete cases, co-occurrence summaries, and model-readiness warnings.
 
 Not allowed: multiple imputation, fitted models, causal inference, or p-value-driven conclusions.
 
@@ -75,7 +94,7 @@ Not allowed: multiple imputation, fitted models, causal inference, or p-value-dr
 
 Purpose: define local deterministic request/response summaries that an AI assistant can ask for after reading the audit report.
 
-Allowed later: grouped summaries, missingness summaries, value counts, mean/SD summaries, and compact JSON request/response examples.
+Implemented: metadata-only requests for variable roles, units, coding, missingness, study design, privacy, repeated measures, population, and time windows.
 
 Not allowed: external LLM API calls, AI inspection of raw rows, uncontrolled query execution, or natural-language SQL over raw private data.
 
@@ -83,13 +102,13 @@ Not allowed: external LLM API calls, AI inspection of raw rows, uncontrolled que
 
 Purpose: improve report consistency, token compression summaries, and portfolio readability.
 
-Allowed later: clearer report sections, deterministic token estimates, and stronger limitations wording.
+Implemented: stable 13-section report order, deterministic approximate token estimates, and stronger limitations wording.
 
 Not allowed: automatic paper writing, full modeling, visualization, or clinical recommendations.
 
-## v0.2 Explicit Non-goals
+## v0.2.0 Explicit Non-goals
 
-The following are not allowed in v0.2:
+The following are not allowed in v0.2.0:
 
 - child skills
 - another `SKILL.md`
@@ -104,19 +123,19 @@ The following are not allowed in v0.2:
 
 ## Standard Codex Prompt Header
 
-Use this header at the start of every v0.2 Codex task:
+Use this header at the start of every v0.2.0 maintenance task:
 
 ```text
 Project: med-data-auditor-skill
 Repo: desmondchun716-glitch/med-data-auditor-skill
-Version target: v0.2
+Version target: v0.2.0 maintenance
 Architecture rule: one main Agent Skill only.
 
-Active workstream:
-- WS<number>: <workstream name>
+Active maintenance goal:
+- <maintenance goal>
 
 Branch:
-- codex/v0.2/ws<number>-<short-slug>
+- codex/v0.2/<short-slug>
 
 Allowed files:
 - <list exact files>
@@ -144,38 +163,37 @@ Validation:
 
 ## Branch And Worktree Coordination Rule
 
-Use one branch per workstream.
+Use one branch per maintenance goal.
 
 Branch naming:
 
 ```text
-codex/v0.2/ws<number>-<short-slug>
+codex/v0.2/<short-slug>
 ```
 
 Examples:
 
 ```text
-codex/v0.2/ws1-contract-guardrails
-codex/v0.2/ws2-audit-log-contract
-codex/v0.2/ws3-flagged-records-contract
+codex/v0.2/docs-release-consistency
+codex/v0.2/contract-polish
+codex/v0.2/sample-output-refresh
 ```
 
 Rules:
 
 - Do not run two Codex sessions on the same branch.
 - Do not let two Codex sessions edit the same file at the same time.
-- Use separate git worktrees for parallel workstreams.
-- Merge Workstream 1 before implementation-heavy v0.2 workstreams.
-- Documentation-only workstreams should not change `core/`, `rules/`, `scripts/`, `tests/`, `data/`, `reports/`, or `examples/`.
-- Code-changing workstreams must include validation output.
-- Each PR must state its active workstream and forbidden changes checked.
+- Use separate git worktrees for parallel maintenance goals.
+- Documentation-only maintenance should not change `core/`, `rules/`, `scripts/`, `tests/`, `data/`, `reports/`, or `examples/` unless a tracked sample output or stale runtime wording is intentionally refreshed.
+- Code-changing maintenance must include validation output.
+- Each PR must state its active maintenance goal and forbidden changes checked.
 
 ## v0.2 PR Checklist
 
-Every v0.2 PR must include:
+Every v0.2.0 maintenance PR must include:
 
-- [ ] Active workstream is named.
-- [ ] Branch follows `codex/v0.2/ws<number>-<short-slug>`.
+- [ ] Active maintenance goal is named.
+- [ ] Branch follows `codex/v0.2/<short-slug>`.
 - [ ] No child skill was created.
 - [ ] No extra `SKILL.md` was created.
 - [ ] No new skill directory was created.
@@ -185,11 +203,11 @@ Every v0.2 PR must include:
 - [ ] No LLM Council was added.
 - [ ] No automatic data cleaning or biomedical correction was added.
 - [ ] No new domain module was added.
-- [ ] Existing v0.1 CLI behavior remains unchanged unless the PR explicitly explains why.
+- [ ] Existing CLI behavior remains backward compatible unless the PR explicitly explains why.
 - [ ] Changed files are listed.
 - [ ] Validation commands or rationale are included.
 
-## v0.3 Candidates
+## v0.3 Next Planned Phase
 
 - Table 1 readiness
 - exploratory Table 1 generation

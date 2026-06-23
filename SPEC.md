@@ -4,21 +4,28 @@
 
 Med Data Auditor Skill turns a biomedical or public health CSV plus a user research question into a compact, evidence-based audit report. The tool performs local full-data scanning and deterministic checks so an AI assistant can interpret structured evidence instead of sampling raw rows.
 
-The project is one main skill named `med-data-auditor-skill`. Future categories are internal modules or roadmap items, not separate skills. The first version is a portfolio-ready v0.1: small, runnable, safe, and clear about limitations.
+The project is one main skill named `med-data-auditor-skill`. Future categories are internal modules or roadmap items, not separate skills. The original v0.1 established a small runnable core. The current v0.2.0 release extends that core with privacy-safe structured outputs, unit warnings, missingness-readiness metrics, iterative extraction requests, and a stable report/token contract while preserving the single-skill identity.
 
 ## Scope
 
-In scope:
+In scope for v0.2.0:
 
 - CSV input
 - Python, pandas, PyYAML, and Markdown output
 - Dataset profiling
 - Missingness and duplicate patient ID checks
 - Configurable medical plausibility rules
+- Warning-only biomedical unit checks
 - Statistical analysis-readiness checks
+- Missingness-readiness metrics
 - Potential identifier field detection
 - Question-driven exposure, outcome, confounder mapping, and basic study design warnings
-- Synthetic sample data, sample report, and simple tests
+- Privacy-safe `audit_log.json` output
+- Privacy-safe `flagged_records.csv` output
+- Metadata-only iterative extraction requests
+- Stable 13-section report contract
+- Transparent approximate token metrics
+- Synthetic sample data and pytest coverage
 
 Out of scope:
 
@@ -31,22 +38,29 @@ Out of scope:
 - Production clinical data management
 - Regulatory-grade CDISC SDTM or ADaM support
 - Separate child skills for future categories
-- GitHub publishing before the user confirms the local version is ready
+- Publishing a new release tag before validation passes
+- Automatic unit conversion
+- Imputation
+- Automated extraction from external systems
+- MCAR/MAR/MNAR classification
+- External tokenizer dependency
 
 ## v0.2 Contract
 
-v0.2 must strengthen the existing single-skill workflow without changing the project identity.
+As of v0.2.0, all seven internal workstreams have been implemented and merged. Future changes should preserve this contract unless a new version explicitly revises it.
 
-All v0.2 work must satisfy:
+v0.2 strengthened the existing single-skill workflow without changing the project identity.
+
+All v0.2.0 maintenance must preserve:
 
 1. The project remains one main Agent Skill named `med-data-auditor-skill`.
-2. Future capabilities are internal workstreams, modules, scripts, rules, or references.
+2. Future capabilities are internal modules, scripts, rules, or references.
 3. No child skills, extra `SKILL.md`, or separate skill directories are allowed.
-4. The v0.1 core pipeline remains stable unless a workstream explicitly requires a minimal change.
-5. Each branch has one active v0.2 workstream.
+4. The original core pipeline remains stable unless a maintenance task explicitly requires a minimal change.
+5. Each branch has one active maintenance goal.
 6. Any new output contract preserves privacy safety, deterministic validation, and human confirmation requirements.
 
-The seven v0.2 internal workstreams are:
+The seven completed v0.2 internal workstreams are:
 
 1. Single-skill guardrails and v0.2 contract
 2. Audit log contract
@@ -138,6 +152,7 @@ The detailed runtime contract is in `references/report_contract.md`.
 
 - Required first actions: verify privacy safety, run the local orchestrator when a CSV is available, read the Markdown report before advising.
 - Required outputs: report with dataset overview, relevant variables and study design, missingness, biomedical warnings, statistical warnings, privacy / PII warnings, analysis-readiness notes, iterative extraction requests, human confirmation questions, token-saving summary, and limitations.
+- Optional outputs: `audit_log.json` and `flagged_records.csv` when requested through CLI flags.
 - Non-negotiable constraints: never overwrite source data, never treat warnings as clinical truth, never upload identifiable patient data.
 - Expected bundled files loaded at runtime: `SKILL.md`; optional routed files in `references/` only when modifying reports, rules, or scope.
 
@@ -166,21 +181,21 @@ Data that must not be stored:
 
 - `SKILL.md` contains runtime activation, workflow, script contract, safety boundaries, and validation commands.
 - `references/` contains report contracts, iterative extraction guidance, rule authoring guidance, and roadmap scope control for one main skill.
-- `core/` contains the internal business modules plus `schemas.py` and `orchestrator.py`.
+- `core/` includes intake, profiling, variable mapping, medical rules, unit warnings, statistical risks, missingness-readiness, privacy checking, extraction requests, report generation, audit logging, flagged-record generation, token metrics, schemas, and orchestration.
 - `scripts/` contains synthetic data generation and compatibility wrappers.
 - `rules/` contains YAML medical, statistical, and variable dictionary configuration.
-- `tests/` contains lightweight regression checks for the first version.
+- `tests/` contains lightweight regression checks for the current release.
 
 ## Validation
 
-- Lightweight validation: run sample data generation, full audit CLI, pytest, and skill structural validator.
+- Lightweight validation: run sample data generation, full v0.2 audit CLI, pytest, compileall, `git diff --check`, and skill structural validator when available.
 - Deeper validation: run against additional synthetic health survey, RWE, and clinical trial-like CSVs.
 - Holdout examples: future versions should keep small de-identified or synthetic edge-case fixtures.
 - Acceptance gates: one-command audit works, injected issues are detected, report includes all required sections, and safety limitations are visible.
 
 ## v0.2 Validation Gates
 
-Documentation-only v0.2 work must pass:
+Documentation or contract maintenance must pass:
 
 ```bash
 git diff --name-only
@@ -189,24 +204,49 @@ git ls-files --cached --others --exclude-standard -- '*SKILL.md'
 
 Expected result for the second command: only the root `SKILL.md` exists.
 
-Documentation-only workstreams should also confirm no core implementation files changed:
+Strictly documentation-only maintenance should also confirm no core implementation files changed:
 
 ```bash
 git diff -- core rules scripts tests data reports examples run_audit.py requirements.txt
 ```
 
-Expected result: no diff.
+Expected result for strictly documentation-only tasks: no diff. Tracked sample
+outputs or runtime wording may be refreshed when the maintenance goal explicitly
+requires release-consistency cleanup.
 
 Code-changing v0.2 work must additionally pass:
 
 ```bash
 python scripts/generate_sample_data.py
-python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md
 python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md --audit-log-output reports/sample_audit_log.json --flagged-records-output reports/sample_flagged_records.csv
 python -m pytest
+python -m compileall -q core tests
+git diff --check
 ```
 
 The PR must explain if any command is not run.
+
+## v0.2.0 Release Validation
+
+Before tagging v0.2.0:
+
+```bash
+git checkout main
+git pull origin main
+
+python scripts/generate_sample_data.py
+
+python run_audit.py \
+  --data data/sample_medical_data.csv \
+  --question "Is BMI associated with hypertension after adjusting for age and sex?" \
+  --output reports/sample_audit_report.md \
+  --audit-log-output reports/sample_audit_log.json \
+  --flagged-records-output reports/sample_flagged_records.csv
+
+python -m pytest
+python -m compileall -q core tests
+git diff --check
+```
 
 ## Known Limitations
 

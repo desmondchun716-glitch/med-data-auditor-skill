@@ -46,7 +46,7 @@ bmi:
 
 ## Authoring Rules
 
-- Keep v0.1 rules generic and conservative.
+- Keep rules generic and conservative.
 - Prefer warnings over automatic cleaning.
 - Set `human_confirmation_required: true` for medical plausibility warnings.
 - Do not add rules that imply clinical truth without study context.

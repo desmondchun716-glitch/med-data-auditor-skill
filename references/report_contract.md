@@ -1,7 +1,11 @@
-# v0.2 Report Contract
+# v0.2.0 Report Contract
 
 Use this reference when editing `core/report_generator.py`, token metrics, or
 tests that validate the generated Markdown report.
+
+As of v0.2.0, this contract is complete. Future changes should preserve the
+13-section order and approximate-token caveat unless a new version explicitly
+revises the report contract.
 
 ## Purpose
 
@@ -11,7 +15,7 @@ cleaned dataset, a model result, or a raw-data extract.
 
 ## Required Section Order
 
-The v0.2 report contains exactly these numbered sections in this order:
+The v0.2.0 report contains exactly these numbered sections in this order:
 
 1. User Question
 2. Executive Summary

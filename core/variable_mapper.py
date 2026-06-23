@@ -128,7 +128,7 @@ def infer_basic_study_design(df: pd.DataFrame, columns: list[str]) -> dict[str, 
         "has_treatment_group": bool(has_treatment),
         "has_repeated_patient_ids": bool(has_repeated_patient_ids),
         "confidence": "low",
-        "note": "v0.1 uses simple column-name heuristics; ask the user to confirm study design.",
+        "note": "This workflow uses simple column-name heuristics; ask the user to confirm study design.",
     }
 
 
@@ -161,7 +161,7 @@ def generate_study_design_warnings(
                 "study_design",
                 "high",
                 None,
-                "The user question appears to use causal language, but v0.1 cannot confirm causal design support.",
+                "The user question appears to use causal language, but this workflow cannot confirm causal design support.",
                 "Use association language unless study design and analysis plan support causal interpretation.",
                 human_confirmation_required=True,
             )
