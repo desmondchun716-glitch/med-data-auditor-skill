@@ -45,6 +45,14 @@ The v0.2 audit log uses this top-level shape:
 }
 ```
 
+The top-level keys are stable for v0.2.0. WS5, WS6, and WS7 extend nested
+content under existing keys rather than adding new top-level keys:
+
+- `dataset_summary.missingness_readiness`
+- `analysis_context.extraction_requests`
+- `token_metrics` expanded approximate-token fields
+- `privacy_safety` unchanged
+
 ## Allowed Fields
 
 The audit log may include:
@@ -57,11 +65,13 @@ The audit log may include:
 - rule paths and short SHA-256 fingerprints
 - report and audit log output paths
 - dataset row count, column count, column names, variable types, missingness summary, and potential ID-like column names
+- missingness-readiness metrics under `dataset_summary`
 - variable-role mapping
 - study-design summary
+- metadata-only iterative extraction requests under `analysis_context`
 - warning counts by category, severity, and issue type
 - warning objects that follow the shared `AuditWarning` schema
-- token compression metrics
+- approximate token compression metrics
 - privacy-safety flags
 
 ## Forbidden Fields
@@ -102,12 +112,22 @@ Generate the audit log only when explicitly requested:
 python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md --audit-log-output reports/sample_audit_log.json
 ```
 
+Generate full v0.2 output when both optional machine-readable outputs are needed:
+
+```bash
+python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md --audit-log-output reports/sample_audit_log.json --flagged-records-output reports/sample_flagged_records.csv
+```
+
 ## Validation Rules
 
 Validation must confirm:
 
 - `schema_version` is `0.2.0`
 - required top-level keys are present
+- no unexpected top-level keys are introduced
+- `dataset_summary.missingness_readiness` is present when missingness-readiness evidence is available
+- `analysis_context.extraction_requests` is present and contains only metadata-safe requests
+- token metrics use the approximate `approx_chars_div_4` method and do not claim exact tokenizer output
 - warning items follow the shared `AuditWarning` schema
 - privacy-safety flags are present and false for raw rows, raw cell values, direct identifier values, and external LLM output
 - generated logs do not contain direct PII values from synthetic privacy tests
@@ -147,11 +167,13 @@ Validation must confirm:
   "dataset_summary": {
     "row_count": 300,
     "column_count": 17,
-    "columns": ["age", "sex", "bmi"]
+    "columns": ["age", "sex", "bmi"],
+    "missingness_readiness": {}
   },
   "analysis_context": {
     "variable_roles": {},
-    "study_design": {}
+    "study_design": {},
+    "extraction_requests": []
   },
   "warnings": {
     "counts": {},
@@ -161,7 +183,18 @@ Validation must confirm:
     "total_count": 0,
     "items": []
   },
-  "token_metrics": {},
+  "token_metrics": {
+    "estimation_method": "approx_chars_div_4",
+    "source_csv_character_count": 0,
+    "source_csv_estimated_tokens": 0,
+    "original_csv_estimated_tokens": 0,
+    "audit_report_character_count": 0,
+    "audit_report_estimated_tokens": 0,
+    "compression_ratio": 0.0,
+    "warning_count": 0,
+    "report_section_count": 13,
+    "notes": []
+  },
   "privacy_safety": {
     "raw_rows_stored": false,
     "raw_cell_values_stored": false,
@@ -172,13 +205,13 @@ Validation must confirm:
 }
 ```
 
-## Future Extensions
+## v0.2.0 Extensions
 
-Future workstreams may build on the audit log by adding:
+The v0.2.0 workstreams build on the audit log by adding:
 
-- WS3 flagged-records references
-- WS5 expanded analysis-readiness metrics
+- WS3 flagged-records references through output paths, not raw row data
+- WS5 expanded analysis-readiness and missingness-readiness metrics
 - WS6 deterministic iterative extraction request metadata
-- stronger rule-version provenance
+- WS7 approximate token metrics and report contract traceability
 
 Future extensions must preserve the privacy rule and must not turn the audit log into a raw-data export.

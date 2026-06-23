@@ -8,17 +8,23 @@ This is not a generic data cleaning script. It is an audit-first workflow that s
 
 Med Data Auditor Skill profiles biomedical and public health datasets locally, detects data quality issues, biomedical plausibility problems, statistical analysis risks, and privacy concerns, then generates compact AI-ready Markdown reports for iterative analysis.
 
-The v0.1 promise is narrow and concrete:
+## Core Promise
+
+The original v0.1 promise was narrow and concrete:
 
 ```text
 CSV + biomedical research question -> AI-ready analysis-readiness audit report
 ```
 
+The current v0.2.0 release keeps the same audit-first identity while adding
+privacy-safe structured outputs, unit warnings, missingness-readiness metrics,
+iterative extraction requests, and a stable report/token contract.
+
 ## Why This Project Matters
 
 Large biomedical datasets are costly and unreliable for an AI assistant to inspect directly. This tool scans the full dataset locally, detects data quality and analysis-readiness risks, and generates a compact Markdown report that an AI assistant or human reviewer can use as evidence.
 
-The project is intentionally small in v0.1: CSV input, pandas profiling, YAML rules, deterministic checks, and an AI-ready report. It does not clean the original data, make clinical decisions, or run production-grade clinical data management.
+The current release is intentionally focused: CSV input, pandas profiling, YAML rules, deterministic checks, privacy-safe structured outputs, and an AI-ready report. It does not clean the original data, make clinical decisions, or run production-grade clinical data management.
 
 This repository contains one main skill named `med-data-auditor-skill`. Future directions should become internal modules or roadmap items after the core workflow is strong enough, not separate skills.
 
@@ -26,15 +32,16 @@ This repository contains one main skill named `med-data-auditor-skill`. Future d
 
 Programmatic scanning first, AI interpretation second. The program scans the full dataset locally; the AI reads only the compressed evidence report; the human confirms warnings before analysis decisions.
 
-## What v0.1 Does Not Do
+## What This Project Does Not Do
 
 - No automatic data cleaning
 - No fitted statistical models
 - No odds ratios, p-values, or confidence intervals
 - No visualization or web UI
 - No external LLM API calls
-- No LLM Council or multi-agent review layer
-- No new domain modules
+- No LLM Council or multi-agent runtime layer
+- No real patient data support
+- No clinical decision-making
 
 ## Features
 
@@ -53,7 +60,7 @@ Programmatic scanning first, AI interpretation second. The program scans the ful
 - Stable v0.2 report contract with 13 ordered sections and explicit safety boundaries
 - Transparent approximate token metrics for compression tracking and audit traceability
 - Synthetic sample data with injected quality issues
-- Simple pytest coverage for the core checks
+- Pytest coverage for core checks, output contracts, report sections, token metrics, and privacy-safe schemas
 
 ## What It Checks
 
@@ -84,6 +91,17 @@ python run_audit.py \
 Open `reports/sample_audit_report.md` to review the generated audit.
 
 The command prints a short run summary and writes the full report to Markdown.
+
+Full v0.2 output:
+
+```bash
+python run_audit.py \
+  --data data/sample_medical_data.csv \
+  --question "Is BMI associated with hypertension after adjusting for age and sex?" \
+  --output reports/sample_audit_report.md \
+  --audit-log-output reports/sample_audit_log.json \
+  --flagged-records-output reports/sample_flagged_records.csv
+```
 
 Optional audit log output:
 
@@ -122,9 +140,11 @@ Example CLI output:
 Wrote audit report to reports/sample_audit_report.md
 Wrote audit log to reports/sample_audit_log.json
 Wrote flagged records to reports/sample_flagged_records.csv
-Warnings: intake=0, medical=7, statistical=6, privacy=2, study_design=0
-Approximate token compression: 9236 -> 2130 (4.3:1)
+Warnings: intake=0, medical=7, statistical=9, privacy=2, study_design=0
+Approximate token compression: 9236 -> 3302 (2.8:1)
 ```
+
+Exact counts may change as deterministic rules and synthetic fixtures evolve.
 
 ## Example Use Case
 
@@ -140,16 +160,17 @@ The auditor checks whether the dataset is ready for that analysis by reviewing k
 
 See `reports/sample_audit_report.md`.
 
-Synthetic demo issue coverage:
+Core synthetic issue coverage:
 
-| Injected issue | Detected in sample report |
-|---|---:|
-| Age range outlier rows | 2 |
-| BMI range outlier rows | 2 |
-| Duplicate patient ID rows | 3 |
-| SBP lower than DBP rows | 1 |
-| Death date before visit date rows | 1 |
-| Negative follow-up rows | 1 |
+| Issue family | Example |
+|---|---|
+| Medical plausibility | Age, BMI, blood pressure, date, and follow-up issues |
+| Data quality | Duplicate patient IDs |
+| Unit warnings | Possible unit or scale mismatch checks |
+| Statistical readiness | Outcome balance, key variables, sample size, and missingness |
+| Missingness readiness | Complete-case rate, row burden, and co-occurrence |
+| Privacy | PII-like fields and small-cell risk |
+| Iterative extraction | Metadata and confirmation requests |
 
 ## Repository Layout
 
@@ -183,18 +204,16 @@ This project is for educational and research data-auditing workflows only.
 - It is not a clinical decision-making tool.
 - It does not diagnose disease, recommend treatment, or validate clinical truth.
 - It does not replace a statistician, clinical data manager, or regulatory-grade workflow.
-- It does not implement full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
+- It does not implement full statistical modeling, visualization, web UI, LLM Council runtime, or automatic data cleaning. These remain out of scope for v0.2.0.
 - All medical plausibility warnings require human confirmation.
 
 ## Roadmap
 
-- v0.1: CSV audit, YAML rules, deterministic warnings, AI-ready report.
-- v0.2: flagged records, audit logs, unit warnings, expanded audit metrics, iterative extraction requests.
-- WS4 unit warnings are deterministic and warning-only; they never convert values or modify the source dataset.
-- WS5 missingness readiness uses deterministic counts, rates, and flags; it does not impute data or classify MCAR/MAR/MNAR.
-- WS6 iterative extraction requests are deterministic, metadata-only, deduplicated, limited to 10, and never automate data collection.
-- WS7 finalizes the 13-section report contract, v0.2 runtime wording, and transparent approximate token metrics without adding new outputs or audit domains.
+- v0.1.0 (complete): CSV audit, YAML rules, deterministic warnings, AI-ready report.
+- v0.2.0 (complete): audit log, flagged records, unit warnings, missingness readiness, iterative extraction requests, report contract, and token metrics.
 - v0.3: Table 1 readiness, logistic regression readiness, basic exploratory outputs, clinical trial demo data.
 - v0.4+: Excel/SAS/Stata support, DuckDB, Great Expectations, CDISC concept checks, web UI.
 
-The GitHub portfolio version should keep the v0.1 scope narrow: one main skill, deterministic local checks, and a professional AI-ready report.
+v0.2.0 remains audit-first and warning-only. It does not clean data, impute values, convert units, fit models, or make clinical claims.
+
+The GitHub portfolio version should keep the v0.2.0 identity focused: one main skill, deterministic local checks, privacy-safe structured outputs, and a professional AI-ready report.

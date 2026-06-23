@@ -9,7 +9,7 @@ description: Audits biomedical, clinical, public health, epidemiology, health su
 
 Use exactly one main skill named `med-data-auditor-skill`. Treat future categories as internal modules or roadmap items, not separate skills.
 
-For v0.1, implement only the core analysis-readiness audit workflow: data intake, data profiling, biomedical plausibility checks, statistical risk checks, variable role mapping, privacy / PII field detection, and AI-ready Markdown report generation.
+For v0.2.0, maintain the audit-first workflow: local CSV intake, profiling, variable mapping, biomedical plausibility checks, unit warnings, statistical-readiness checks, missingness-readiness metrics, privacy checks, iterative extraction requests, audit log output, flagged-record output, and AI-ready Markdown report generation.
 
 ## Default Workflow
 
@@ -20,10 +20,22 @@ For v0.1, implement only the core analysis-readiness audit workflow: data intake
 python run_audit.py --data <csv_path> --question "<research question>" --output reports/audit_report.md
 ```
 
-When reproducibility or downstream tooling is needed, pass `--audit-log-output <path>` to generate a privacy-safe JSON audit trail.
+When reproducibility or downstream tooling is needed, pass:
+
+```bash
+python run_audit.py \
+  --data <csv_path> \
+  --question "<research question>" \
+  --output reports/audit_report.md \
+  --audit-log-output reports/audit_log.json \
+  --flagged-records-output reports/flagged_records.csv
+```
+
+`audit_log.json` stores privacy-safe machine-readable audit evidence.
+`flagged_records.csv` stores privacy-safe row references from warnings, not raw data.
 
 3. Read the generated Markdown report before giving analysis advice.
-4. Base recommendations on the report evidence: key variables, missingness, duplicates, plausibility warnings, privacy warnings, and statistical risks.
+4. Base recommendations on the report evidence: key variables, missingness-readiness metrics, duplicate IDs, unit warnings, biomedical plausibility warnings, privacy warnings, statistical-readiness risks, and iterative extraction requests.
 5. Ask the user to confirm ambiguous variable meanings and any critical medical plausibility warnings before proceeding to analysis.
 
 ## Internal Module Contract
@@ -34,8 +46,14 @@ When reproducibility or downstream tooling is needed, pass `--audit-log-output <
 | `core/profiler.py` | Generate compact dataset profile, missingness, types, duplicates, and ID-like columns |
 | `core/variable_mapper.py` | Map question terms to exposure, outcome, confounders, and study design warnings |
 | `core/medical_rules.py` | Detect biomedical plausibility and data-quality warnings |
+| `core/unit_warnings.py` | Detect possible biomedical unit or scale mismatches without converting values |
 | `core/statistical_risks.py` | Detect analysis-readiness risks before modeling |
+| `core/missingness_readiness.py` | Compute privacy-safe missingness-readiness metrics and warning-only missingness checks |
 | `core/privacy_checker.py` | Detect privacy / PII fields and small-cell risks |
+| `core/extraction_requests.py` | Generate deterministic metadata-only iterative extraction requests |
+| `core/audit_log.py` | Build and validate privacy-safe machine-readable audit logs |
+| `core/flagged_records.py` | Build privacy-safe row-reference issue CSV output from warnings |
+| `core/token_metrics.py` | Build transparent approximate token metrics without external tokenizer dependencies |
 | `core/report_generator.py` | Render the AI-ready Markdown report |
 | `core/schemas.py` | Define shared warning schema and issue categories |
 | `core/orchestrator.py` | Control module order and produce the final report |
@@ -55,18 +73,17 @@ When reproducibility or downstream tooling is needed, pass `--audit-log-output <
 - Keep deterministic checks in Python and interpretation in the AI response.
 - Do not split this project into multiple skills.
 - Do not make causal, clinical, or regulatory claims.
-- Do not implement full statistical modeling, visualization, web UI, LLM Council, or automatic data cleaning in v0.1.
+- Do not implement full statistical modeling, visualization, web UI, LLM Council runtime, external LLM API calls, automatic data cleaning, imputation, unit conversion, or clinical decision support unless a future roadmap item explicitly redefines scope.
 - Prefer association language unless study design and analysis justify stronger wording.
 - If the report is missing key variables or has critical warnings, stop and ask for human confirmation before modeling advice.
-- For v0.2 maintenance, require the standard Codex prompt header from `references/roadmap.md` before making changes.
+- For maintenance, preserve the v0.2.0 contract unless a future version explicitly revises scope.
 
 ## References
 
 - Read `references/report_contract.md` before changing report sections, warning schemas, or token-saving summaries.
 - Read `references/audit_log_contract.md` before changing audit log schema, audit log safety rules, or JSON output behavior.
 - Read `references/rules-guide.md` before adding or changing YAML rules.
-- Read `references/roadmap.md` before expanding beyond v0.1 scope.
-- Read `references/roadmap.md` before any v0.2 workstream, branch, or PR planning.
+- Read `references/roadmap.md` before v0.3 or later expansion.
 - Read `SPEC.md` when maintaining scope, validation expectations, or evidence policy.
 - Read `SOURCES.md` when checking provenance, decisions, gaps, and changelog history.
 
@@ -76,8 +93,19 @@ Run these checks after modifying the skill or scripts:
 
 ```bash
 python scripts/generate_sample_data.py
-python run_audit.py --data data/sample_medical_data.csv --question "Is BMI associated with hypertension after adjusting for age and sex?" --output reports/sample_audit_report.md
+
+python run_audit.py \
+  --data data/sample_medical_data.csv \
+  --question "Is BMI associated with hypertension after adjusting for age and sex?" \
+  --output reports/sample_audit_report.md \
+  --audit-log-output reports/sample_audit_log.json \
+  --flagged-records-output reports/sample_flagged_records.csv
+
 python -m pytest
+python -m compileall -q core tests
+git diff --check
 ```
+
+Generated validation artifacts should not be committed unless intentionally tracked.
 
 If an Agent Skills structural validator is available, run it against this skill directory before publishing.

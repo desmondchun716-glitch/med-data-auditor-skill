@@ -8,6 +8,11 @@ Use this file when editing `core/flagged_records.py`, `core/orchestrator.py`, or
 
 The output is optional. No CSV should be written unless the user provides `--flagged-records-output` or `flagged_records_output_path`.
 
+The schema is unchanged after WS5, WS6, and WS7. Missingness warnings and unit
+warnings can flow into `flagged_records.csv` only when they are existing
+`AuditWarning` dictionaries with `example_rows`. Iterative extraction requests
+do not enter `flagged_records.csv`.
+
 ## Required Header
 
 The CSV header order is fixed:
@@ -21,6 +26,8 @@ schema_version,issue_id,issue_type,severity,variable,row_index,source_warning_co
 - Build rows only from existing `AuditWarning` dictionaries.
 - Create one CSV row per `warning.example_rows` entry.
 - Create no CSV row for warnings with empty `example_rows`.
+- Create rows for missingness or unit warnings only through the same `example_rows` rule.
+- Create no rows from iterative extraction requests.
 - Copy `example_rows` values exactly into `row_index`.
 - Do not renumber rows.
 - Do not look up raw dataframe row content.

@@ -4,7 +4,7 @@
 
 | Source | Trust | Contribution | Usage |
 |---|---|---|---|
-| `med_data_auditor_skill_spec.md` | High | Product intent, v0.1 scope, module list, safety boundaries, roadmap | Adapted into runtime skill, scripts, README, SPEC, and references |
+| `med_data_auditor_skill_spec.md` | High | Product intent, original v0.1 scope, module list, safety boundaries, roadmap | Adapted into runtime skill, scripts, README, SPEC, and references |
 | `med_data_auditor_skill_complete_blueprint.md` | High | Latest one-skill architecture, seven internal modules, schemas/orchestrator layers, study design warnings, PII/small-cell privacy notes | Adapted into `core/` modules, docs, report contract, and roadmap |
 | `skill-writer` local skill | High | Skill synthesis, authoring, description optimization, validation workflow | Used to choose workflow-process class and script-backed shape |
 | `skill-creator` local skill | High | Agent Skills structure, frontmatter, validation, optional `agents/openai.yaml` | Used for `SKILL.md` and metadata shape |
@@ -19,17 +19,17 @@
 | Primary shape: script-backed workflow | Adopted | Data profiling, rule checks, and report generation must be deterministic and reusable |
 | Runtime entrypoint: `SKILL.md` uppercase | Adopted | Agent Skills require `SKILL.md`; the source draft's lowercase `skill.md` was upgraded |
 | Keep original design draft | Adopted | It is useful provenance and future planning material |
-| External LLM API use | Rejected for v0.1 | The source requires local deterministic scanning and no external model calls |
-| Web UI | Deferred | Out of v0.1 scope and would increase completion risk |
+| External LLM API use | Rejected for v0.2.0 | The source requires local deterministic scanning and no external model calls |
+| Web UI | Deferred | Out of current scope and would increase completion risk |
 | Eight separate skill categories | Rejected | Future categories should be internal modules or roadmap items inside one main skill |
-| GitHub upload | Completed | Published after v0.1 workflow polish, validation, and user approval |
+| GitHub upload | Completed | Published after workflow polish, validation, and user approval |
 | `core/` module architecture | Adopted | The latest blueprint clarifies seven business modules and two support layers |
-| Basic study design warnings | Adopted for v0.1 | Warnings support analysis readiness without performing modeling |
+| Basic study design warnings | Adopted | Warnings support analysis readiness without performing modeling |
 | v0.2 as internal workstreams | Adopted | Keeps future work inside one main skill and prevents Codex from creating child skills |
 | Standard Codex prompt header | Adopted | Makes future task boundaries explicit before each Codex session |
 | One branch per workstream | Adopted | Reduces merge conflicts and prevents overlapping Codex edits |
 | v0.2 PR checklist | Adopted | Provides a lightweight release gate for portfolio-quality maintenance |
-| Documentation-only Workstream 1 | Adopted | Protects the v0.1 pipeline while setting up future implementation workstreams |
+| Documentation-only Workstream 1 | Adopted | Protected the single-skill pipeline while setting up future implementation workstreams |
 | WS2 audit log contract | Adopted | Adds a privacy-safe machine-readable audit trail without storing raw patient data |
 | WS3 flagged records contract | Adopted | Adds an optional row-reference issue index without exporting raw patient data |
 | WS4 warning-only unit checks | Adopted | Adds conservative deterministic unit-risk evidence without conversion, raw-value leakage, or schema expansion |
@@ -41,14 +41,30 @@
 | Character-based token metrics | Adopted | Improves transparency and audit traceability without an external tokenizer dependency or exact-token claim |
 | New WS7 output or CLI flag | Rejected | Existing report, audit log, and flagged-record outputs are sufficient |
 
+## v0.2.0 Final Release Evidence
+
+All seven v0.2 workstreams are implemented and merged.
+
+- WS1 merged: single-skill guardrails
+- WS2 merged: `audit_log.json` output
+- WS3 merged: `flagged_records.csv` output
+- WS4 merged: unit warning checks
+- WS5 merged: missingness readiness metrics
+- WS6 merged: iterative extraction protocol
+- WS7 merged: report contract and token metrics polish
+- Final validation included sample data generation, full v0.2 output generation, pytest, compileall, and `git diff --check`.
+- Tag: `v0.2.0` at merge commit `3ce8788`
+
+Final boundary decision: v0.2.0 remains warning-only and audit-first. It does not add modeling, cleaning, imputation, automatic unit conversion, external LLM API calls, child skills, or real patient data support.
+
 ## Coverage Matrix
 
-| Dimension | v0.1 Coverage |
+| Dimension | v0.2.0 Coverage |
 |---|---|
 | Preconditions | Privacy safety check and synthetic-data default |
-| Ordered flow | CLI calls `core/orchestrator.py`, which runs intake, profiling, mapping, study design, medical checks, statistical checks, privacy checks, and report rendering |
+| Ordered flow | CLI calls `core/orchestrator.py`, which runs intake, profiling, mapping, study design, medical checks, unit warnings, statistical checks, missingness-readiness, privacy checks, extraction requests, report rendering, audit logging, flagged-record generation, and token metrics |
 | Safety boundaries | No overwrite, no real patient data, no clinical decisions, warnings require confirmation |
-| Expected outputs | AI-ready Markdown report plus sample data and tests |
+| Expected outputs | AI-ready Markdown report, optional audit log JSON, optional flagged records CSV, sample data, and tests |
 | Failure handling | SKILL.md lists script fallbacks and asks for human confirmation on ambiguity |
 | Validation | Sample data generation, CLI run, pytest, structural skill validator |
 | Iterative extraction | Deterministic request schema, grouped evidence triggers, privacy-safe guidance, report rendering, and audit-log nesting under `analysis_context` |
@@ -57,7 +73,7 @@
 
 - Source intent: create a token-efficient biomedical data auditor suitable for future work and eventual portfolio display.
 - Local target: produce an installable Agent Skill repository plus a runnable Python CLI.
-- Fidelity boundary: preserve v0.1 scope, safety limits, deterministic program/AI division, report sections, and roadmap.
+- Fidelity boundary: preserve single-skill scope, safety limits, deterministic program/AI division, report sections, and roadmap.
 - Local replacements: use `SKILL.md` instead of lowercase `skill.md`; use `core/` internal modules instead of separate skills; split maintenance and provenance into `SPEC.md` and `SOURCES.md`.
 - Omitted material: long narrative explanations from the design draft are not repeated in runtime files.
 - WS6 source intent: turn audit findings into safe questions about metadata and confirmations before analysis.
@@ -88,7 +104,7 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - Variable role mapping is keyword-based and may need user confirmation.
 - WS3 flagged records are implemented as an optional CSV output; future work should keep the contract privacy-safe.
 - Future Codex sessions must include the standard prompt header to avoid scope drift.
-- All seven v0.2 workstreams are implemented; release tagging remains a separate post-merge step.
+- All seven v0.2 workstreams are implemented and the `v0.2.0` tag is recorded.
 
 ## Changelog
 
@@ -103,3 +119,4 @@ Final description emphasizes health-related datasets, local audit tasks, and rep
 - 2026-06-21: Added WS5 deterministic, privacy-safe missingness and analysis-readiness metrics.
 - 2026-06-21: Added WS6 deterministic, privacy-safe iterative extraction requests in the report and audit-log analysis context.
 - 2026-06-22: Finalized the WS7 v0.2 report contract, runtime wording, approximate token metrics, audit-log validation, and regression tests.
+- 2026-06-22: Merged the final v0.2 workstream to `main`, validated the release, and tagged `v0.2.0`.

@@ -46,7 +46,7 @@ def intake_dataset(path: str | Path) -> tuple[pd.DataFrame, dict[str, Any], list
                 "medium",
                 None,
                 "Input file does not have a .csv extension.",
-                "v0.1 is designed for CSV input; confirm the file format before auditing.",
+                "This workflow is designed for CSV input; confirm the file format before auditing.",
                 human_confirmation_required=True,
             )
         )
